@@ -1,0 +1,14 @@
+{
+	"name": "marek",
+	"stat": {
+		"1": 16, //strength
+		"2": 14, //speed
+		"3": 15, //agility
+		"4": 13  //endurance
+	},
+	"class": {
+		"fighter": 12,
+		"ranger": 6,
+	},
+	"activeClass": "fighter"
+}

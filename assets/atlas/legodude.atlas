@@ -1,0 +1,118 @@
+
+legodude.png
+size: 1024,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Boot
+  rotate: false
+  xy: 178, 328
+  size: 190, 182
+  orig: 190, 182
+  offset: 0, 0
+  index: -1
+Calf
+  rotate: false
+  xy: 843, 230
+  size: 95, 96
+  orig: 95, 96
+  offset: 0, 0
+  index: -1
+Chest
+  rotate: false
+  xy: 2, 232
+  size: 174, 278
+  orig: 174, 278
+  offset: 0, 0
+  index: -1
+Footbend
+  rotate: false
+  xy: 562, 328
+  size: 183, 182
+  orig: 183, 182
+  offset: 0, 0
+  index: -1
+Forearm
+  rotate: true
+  xy: 285, 89
+  size: 108, 159
+  orig: 108, 159
+  offset: 0, 0
+  index: -1
+Hand
+  rotate: false
+  xy: 116, 2
+  size: 57, 71
+  orig: 57, 71
+  offset: 0, 0
+  index: -1
+Helmet
+  rotate: true
+  xy: 116, 75
+  size: 122, 167
+  orig: 122, 167
+  offset: 0, 0
+  index: -1
+Rear_Boot
+  rotate: false
+  xy: 370, 328
+  size: 190, 182
+  orig: 190, 182
+  offset: 0, 0
+  index: -1
+Rear_Calf
+  rotate: false
+  xy: 607, 101
+  size: 95, 96
+  orig: 95, 96
+  offset: 0, 0
+  index: -1
+Rear_Footbend
+  rotate: false
+  xy: 747, 328
+  size: 183, 182
+  orig: 183, 182
+  offset: 0, 0
+  index: -1
+Rear_Forearm
+  rotate: true
+  xy: 446, 89
+  size: 108, 159
+  orig: 108, 159
+  offset: 0, 0
+  index: -1
+Rear_Hand
+  rotate: false
+  xy: 175, 2
+  size: 57, 71
+  orig: 57, 71
+  offset: 0, 0
+  index: -1
+Rear_Thigh
+  rotate: true
+  xy: 178, 199
+  size: 127, 230
+  orig: 127, 230
+  offset: 0, 0
+  index: -1
+Rear_Upper_Arm
+  rotate: false
+  xy: 2, 31
+  size: 112, 199
+  orig: 112, 199
+  offset: 0, 0
+  index: -1
+Thigh
+  rotate: true
+  xy: 410, 199
+  size: 127, 230
+  orig: 127, 230
+  offset: 0, 0
+  index: -1
+Upper_Arm
+  rotate: true
+  xy: 642, 214
+  size: 112, 199
+  orig: 112, 199
+  offset: 0, 0
+  index: -1

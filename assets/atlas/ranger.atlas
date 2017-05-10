@@ -1,0 +1,48 @@
+
+ranger.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Left Arm
+  rotate: false
+  xy: 166, 112
+  size: 227, 241
+  orig: 227, 241
+  offset: 0, 0
+  index: -1
+Left Leg
+  rotate: false
+  xy: 2, 2
+  size: 162, 351
+  orig: 162, 351
+  offset: 0, 0
+  index: -1
+Right Arm
+  rotate: true
+  xy: 444, 361
+  size: 176, 259
+  orig: 176, 259
+  offset: 0, 0
+  index: -1
+Right Leg
+  rotate: false
+  xy: 711, 390
+  size: 113, 382
+  orig: 113, 382
+  offset: 0, 0
+  index: -1
+Skirt
+  rotate: false
+  xy: 444, 539
+  size: 265, 233
+  orig: 265, 233
+  offset: 0, 0
+  index: -1
+Torso
+  rotate: false
+  xy: 2, 355
+  size: 440, 417
+  orig: 440, 417
+  offset: 0, 0
+  index: -1
