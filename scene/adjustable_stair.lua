@@ -16,11 +16,15 @@ local source, assets, script
 local lastTime = 0
 
 -- Scene Variables
-local view, phase, params
+local view, phase, params, source
 local scene = composer.newScene()
 local width, height, xn, yn = display.actualContentWidth, display.actualContentHeight, display.contentCenterX, display.contentCenterY
 local background, midground, foreground, interface
 local backgroundImage, hero, heroics
+
+local button;
+local bw = 80 --Button Width
+local bp = (width-4*bw)/5 -- Button Padding
 
 
 --[[
@@ -31,7 +35,8 @@ function scene:create( event )
 
 	-- Load Assets
 	params = event.params
-	local path = "D:/Calliope/Demo/data/"..id..".json" --Replace with System.pathForFile before building
+	local path = system.pathForFile( "" .. id .. ".json", system.DocumentsDirectory )
+	--local path = "/data/"..id..".json"
 	local file, errorString = io.open( path, "r" )
 	if not file then
 		print("File Error: " .. errorString)
@@ -55,6 +60,9 @@ function scene:create( event )
 	foreground = display.newGroup()
 	view:insert( foreground )
 
+	interface = display.newGroup()
+	view:insert( interface )
+
 	-- Prep Content: first we start with static images
 	backgroundImage = display.newImageRect( "assets/img/longStair_bg.png", 480, 640 )
 	background:insert( backgroundImage ); backgroundImage.x = xn; backgroundImage.y = yn
@@ -76,6 +84,97 @@ function scene:create( event )
 		hero:updateWorldTransform()
 	end )
 
+	button = {
+
+		none = widget.newButton({
+			label = "N",
+			shape = "rect",
+			fillColor = {
+				default = { 0.2, 0.2, 0.2 },
+				over = { 0.8, 0.8, 0.8 }
+			},
+			labelColor = {
+				default = { 1, 1, 1 },
+				over = { 0.2, 0.2, 0.2 }
+			},
+			width = bw,
+			height = bw,
+			x = (bw/2)+bp,
+			y = height-(bw/2)-bp,
+			isEnabled = true,
+			onRelease = function()
+				heroics:setEmptyAnimation( 0, 0.2 )
+			end
+		}),
+
+		run = widget.newButton({
+			label = "R",
+			shape = "rect",
+			fillColor = {
+				default = { 0.2, 0.2, 0.2 },
+				over = { 0.8, 0.8, 0.8 }
+			},
+			labelColor = {
+				default = { 1, 1, 1 },
+				over = { 0.2, 0.2, 0.2 }
+			},
+			width = bw,
+			height = bw,
+			x = (bw*1.5)+2*bp,
+			y = height-(bw/2)-bp,
+			isEnabled = true,
+			onRelease = function()
+				heroics:setAnimationByName( 0, "run", true )
+			end
+		}),
+
+		squat = widget.newButton({
+			label = "S",
+			shape = "rect",
+			fillColor = {
+				default = { 0.2, 0.2, 0.2 },
+				over = { 0.8, 0.8, 0.8 }
+			},
+			labelColor = {
+				default = { 1, 1, 1 },
+				over = { 0.2, 0.2, 0.2 }
+			},
+			width = bw,
+			height = bw,
+			x = (bw*2.5)+3*bp,
+			y = height-(bw/2)-bp,
+			isEnabled = true,
+			onRelease = function()
+				heroics:setAnimationByName( 0, "airSquat", true )
+			end
+		}),
+
+		climb = widget.newButton({
+			label = "C",
+			shape = "rect",
+			fillColor = {
+				default = { 0.2, 0.2, 0.2 },
+				over = { 0.8, 0.8, 0.8 }
+			},
+			labelColor = {
+				default = { 1, 1, 1 },
+				over = { 0.2, 0.2, 0.2 }
+			},
+			width = bw,
+			height = bw,
+			x = (bw*3.5)+4*bp,
+			y = height-(bw/2)-bp,
+			isEnabled = true,
+			onRelease = function()
+				heroics:setAnimationByName( 0, "runUpStairs", true )
+			end
+		})
+	}
+
+	for key,value in pairs( button ) do
+		interface:insert( value )
+	end
+
 end
 
 
@@ -92,7 +191,8 @@ function scene:show( event )
 	--]]
 	if phase == "will" then
 		-- Place and prepare skeletons
-		hero.group.x, hero.group.y = xn, height-40
+		hero.group.x, hero.group.y = xn, yn+140
+		heroics:setEmptyAnimation( 0, 0 )
 
 		-- Load encounter start screen with params
 		composer.showOverlay( "scene.encounter_start" )
@@ -103,7 +203,7 @@ function scene:show( event )
 			Did phase
 	--]]
 	elseif phase == "did" then
-		heroics:setAnimationByName( 0, "run", true )
+		--heroics:setAnimationByName( 0, "run", true )
 
 	end
 end

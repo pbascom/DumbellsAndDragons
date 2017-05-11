@@ -23,15 +23,15 @@ local boxWidth, boxPadding, labelLength, labelPadding, labelTextSize, labelTextP
 function scene:create( event )
 
 	-- Character File Import
-	--local path = system.pathForFile( "chars.json", system.ResourceDirectory )
-	local path = "D:/Calliope/Demo/data/chars.json"
+	local path = system.pathForFile( "chars.json", system.DocumentsDirectory )
+	--local path = "D:/Calliope/Demo/data/chars.json"
+	--local path = "data/chars.json"
 	local file, errorString = io.open( path, "r" )
 
 	if not file then
 		print( "File error: " .. errorString )
 	else
-		local content = file:read( "*a" )
-		character = json.decode( content )
+		character = json.decode( file:read( "*a" ) )
 	end
 	io.close()
 
