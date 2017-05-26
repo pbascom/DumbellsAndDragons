@@ -21,6 +21,7 @@ local width, height, xn, yn = display.actualContentWidth, display.actualContentH
 local background, midground, foreground, interface
 local backgroundImage, hero, heroics, prompts
 local pauseButton, playButton
+local flavorText, prompt, promptQuantity, promptBackground
 
 local stateTemplate = {
 	willShow = function( event )
@@ -53,7 +54,7 @@ local READY = {
 				default = theme.green,
 				over = theme.darkGreen
 			},
-			label = "Next",
+			label = "Begin",
 			fontSize = theme.buttonFontSize,
 			fontFamily = theme.buttonFontFamily,
 			labelColor = {
@@ -61,6 +62,11 @@ local READY = {
 				over = theme.darkWhite
 			},
 			labelShadow = true,
+			icon = "playIcon",
+			iconColor = {
+				default = theme.white,
+				over = theme.darkWhite
+			},
 			shadowOffsetX = 2,
 			shadowOffsetY = 2,
 			shadowSize = 12,
@@ -70,8 +76,6 @@ local READY = {
 			end
 		} )
 		interface:insert( playButton )
-		playButton.x, playButton.y = width - 60, height - 80
-		playButton.isVisible = false
 
 		pauseButton = ui.newCircleButton( {
 			radius = 32.5,
@@ -83,6 +87,11 @@ local READY = {
 			fontSize = theme.buttonFontSize,
 			fontFamily = theme.buttonFontFamily,
 			labelColor = {
+				default = theme.white,
+				over = theme.darkWhite
+			},
+			icon = "pauseIcon",
+			iconColor = {
 				default = theme.white,
 				over = theme.darkWhite
 			},
@@ -111,7 +120,58 @@ local READY = {
 		print( heroics.tracks[2].alpha )
 		heroics.tracks[2].alpha = 0.65
 
-		-- 
+		-- Place initial UI
+		promptBackground = fx.newRect( xn, 3*height/16, width-80, height/4, { 0.3, 0.5 } )
+		interface:insert( promptBackground )
+
+		flavorText = fx.newShadowText( {
+			parent = interface,
+			text = "Just gotta start climbing...",
+			x = xn,
+			y = 3*height/16 - 50,
+			font = theme.baseFontFamily,
+			fontSize = theme.flavorFontSize,
+			color = theme.white,
+			align = "center",
+			shadowOffsetX = 2,
+			shadowOffsetY = 2,
+			shadowSize = 12,
+			shadowOpacity = 0.8,
+		} )
+
+		prompt = fx.newShadowText( {
+			parent = interface,
+			text = "Air Squats",
+			x = xn + 20,
+			y = 3*height/16+10,
+			font = theme.boldFontFamily,
+			fontSize = 24,
+			color = theme.white,
+			align = "center",
+			shadowOffsetX = 2,
+			shadowOffsetY = 2,
+			shadowSize = 12,
+			shadowOpacity = 0.8,
+		} )
+
+		promptQuantity = fx.newShadowText( {
+			parent = interface,
+			text = "15",
+			x = xn - 75,
+			y = 3*height/16+10,
+			font = theme.baseFontFamile,
+			fontSize = 36,
+			color = theme.green,
+			align = "center",
+			shadowOffsetX = 2,
+			shadowOffsetY = 2,
+			shadowSize = 12,
+			shadowOpacity = 0.8,
+		} )
+
+		playButton.x, playButton.y = xn, 5*height/16
+		playButton.isVisible = true
+		playButton:toFront()
 
 	end
 }
