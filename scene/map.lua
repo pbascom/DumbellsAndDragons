@@ -7,7 +7,7 @@
 local sceneName = "map"
 local composer = require "composer"
 local widget = require "widget"
-local util = require "lib.util"
+local fn = require "lib.fn"
 local raleway, unifraktur = "assets/font/Raleway 500.ttf", "assets/font/UnifrakturCook 700.ttf"
 local raleway_bold = "assets/font/Raleway 700.ttf"
 
@@ -16,13 +16,13 @@ local raleway_bold = "assets/font/Raleway 700.ttf"
 -- Scene Variables
 local scene = composer.newScene()
 local background, midground, foreground, interface
-local map, mbutton, uibutton
+local map, mbutton, uibutton, uiTray, uiTrayShadow
 
 local view, phase, params
 
 local width, height, xn, yn = display.actualContentWidth, display.actualContentHeight, display.contentCenterX, display.contentCenterY
-local mbw, ubw = 60, 80 -- Map button width, UI button width
-local ubp = (width-4*ubw)/5 -- Ui button padding
+local mbw, ubw = 60, width/4.5 -- Map button width, UI button width
+local ubp = (width-4*ubw)/5 -- UI button padding
 
 function getGoTo( scene, options )
 	function goTo( event )
@@ -52,11 +52,12 @@ function scene:create( event )
 
 	interface = display.newGroup()
 	view:insert( interface )
+	interface.x, interface.y = xn-width/2, yn-height/2 --Letterbox correction
 
 
 	-- Content
 	map = display.newImageRect( background, "assets/img/map.jpg", 480, 640 )
-	map.x = 180; map.y = 320
+	map.x = xn; map.y = yn
 
 	mbutton = {
 
@@ -64,21 +65,23 @@ function scene:create( event )
 			width = mbw,
 			height = mbw,
 			x = xn+85,
-			y = yn-145,
+			y = yn-125,
 			defaultFile = "assets/img/mbutton_stair.png",
 			isEnabled = false,
-			onRelease = getGoTo("adjustable_stair", { effect = "fade", time = 300, params = { class = "ranger", level = "2" } } )
+			onRelease = getGoTo("long_stair", { effect = "fade", time = 300, params = { class = "ranger", level = "2" } } )
 		}),
 
+		--[[
 		spire = widget.newButton({
 			width = mbw,
 			height = mbw,
-			x = xn+100,
-			y = yn-230,
+			x = xn+130,
+			y = yn-245,
 			defaultFile = "assets/img/mbutton_spire.png",
 			isEnabled = false,
-			onRelease = getGoTo("adjustable_stair", { effect = "fade", time = 300, params = { class = "fighter", level = "2" }  } )
+			onRelease = getGoTo("long_stair", { effect = "fade", time = 300, params = { class = "fighter", level = "2" }  } )
 		}),
+		--]]
 
 	}
 
@@ -162,9 +165,21 @@ function scene:create( event )
 		}),
 	}
 
+	uiTray = display.newRect( interface, width/2, height-(ubw/2)-ubp, width, ubw+2*ubp )
+	uiTray:setFillColor( 0.9 )
+
+	uiTrayShadow = display.newRect( interface, width/2, height-(ubw+2*ubp)-32, width, 64 )
+	uiTrayShadow.fill = {
+		type = "image",
+		filename = "assets/img/shadow.png"
+	}
+
 	for key,value in pairs(uibutton) do
 		interface:insert(value)
 	end
+
+	--interface.x = xn-(width/2)
+
 end
 
 

@@ -11,6 +11,8 @@ application =
 		height = 640, 
 		scale = "letterBox",
 		fps = 30,
+		xAlign = "center",
+		yAlign = "center",
 		
 		imageSuffix =
 		{

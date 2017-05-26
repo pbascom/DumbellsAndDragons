@@ -24,8 +24,6 @@ function scene:create( event )
 
 	-- Character File Import
 	local path = system.pathForFile( "chars.json", system.DocumentsDirectory )
-	--local path = "D:/Calliope/Demo/data/chars.json"
-	--local path = "data/chars.json"
 	local file, errorString = io.open( path, "r" )
 
 	if not file then
@@ -50,6 +48,7 @@ function scene:create( event )
 
 	interface = display.newGroup()
 	view:insert( interface )
+	interface.x, interface.y = xn-width/2, yn-height/2 --Letterbox correction
 
 	-- Content
 	backgroundImage = display.newRect( background, xn, yn, width, height )

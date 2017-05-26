@@ -6,10 +6,11 @@
 -- Requirements
 local composer = require "composer"
 local widget = require "widget"
-local util = require "lib.util"
+local fn = require "lib.fn"
+local fx = require "lib.fx"
 
 -- Scene Variables
-local view, phase, parent, params
+local view, parent, params, phase
 local scene = composer.newScene()
 local width, height, xn, yn = display.actualContentWidth, display.actualContentHeight, display.contentCenterX, display.contentCenterY
 local raleway, unifraktur, raleway_bold = "assets/font/Raleway 500.ttf", "assets/font/UnifrakturCook 700.ttf", "assets/font/Raleway 700.ttf"
@@ -24,7 +25,7 @@ local diffPicker, diffText, goButton, goTimer
 function scene:create( event )
 
 	-- Parent View
-	local view = self.view
+	view, parent, params = self.view, event.parent, event.params
 
 	--Content
 	uiScreen = display.newRect( view, xn, yn, width, height )
@@ -77,8 +78,7 @@ end
 function scene:show( event )
 
 	-- Initialize variables
-	local view = self.view
-	local phase = event.phase
+	phase, parent = event.phase, event.parent
 
 	-- Will phase
 	if phase == "will" then
@@ -114,6 +114,7 @@ function scene:show( event )
 	elseif phase == "did" then
 		function beginWorkout()
 			composer.hideOverlay( "slideDown", 300 )
+			parent:startWorkout()
 		end
 		goButton:addEventListener( "tap", beginWorkout )
 	end
@@ -127,7 +128,6 @@ end
 
 function scene:hide( event )
 
-	local view = self.view
 
 end
 
@@ -139,7 +139,6 @@ end
 
 function scene:destroy( event )
 
-	local view = self.view
 
 end
 
@@ -149,22 +148,3 @@ scene:addEventListener( "hide" )
 scene:addEventListener( "destroy" )
 
 return scene
-
-
-
-
-
-
-
---[[
-		Load Display Groups
---]]
-
-
-
-
-
-
---[[
-		Load sprite sheets
---]]
