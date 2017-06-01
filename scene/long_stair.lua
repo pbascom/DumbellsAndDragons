@@ -8,6 +8,7 @@ local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
 local composer = require "composer"
 local json = require "json"
+local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 -- Encounter Variables
 local name, id = "The Long Stair", "stair"
@@ -39,10 +40,10 @@ local stateTemplate = {
 local READY = {
 	willShow = function( event )
 
-		-- Show encounter splash screen
+		--[[ Show encounter splash screen
 		composer.showOverlay( "scene.encounter_splash", { isModal = true, params = {
 			id = id,
-			description = "The path is steep and jagged, a crude stair that winds into the Stony Hills and vanishes out of sight. This journey won't be easy.",
+			description = "The path is steep and jagged, a crude stair that winds into the Hills and vanishes out of sight. This journey won't be easy.",
 			duration = "25 minutes",
 			equipment = "Track or Treadmill, Exercise Mat",
 		} } ) --]]
@@ -126,7 +127,7 @@ local READY = {
 
 		flavorText = fx.newShadowText( {
 			parent = interface,
-			text = "Just gotta start climbing...",
+			text = "Nothing to do but climb...",
 			x = xn,
 			y = 3*height/16 - 50,
 			font = theme.baseFontFamily,
@@ -159,7 +160,7 @@ local READY = {
 			text = "15",
 			x = xn - 75,
 			y = 3*height/16+10,
-			font = theme.baseFontFamile,
+			font = theme.baseFontFamily,
 			fontSize = 36,
 			color = theme.green,
 			align = "center",
@@ -174,6 +175,14 @@ local READY = {
 		playButton:toFront()
 
 	end
+}
+
+local promptCycle = {
+	
+}
+
+local promptState = {
+	
 }
 
 local state = READY
@@ -235,6 +244,10 @@ function scene:create( event )
 		heroics:apply(hero)
 		hero:updateWorldTransform()
 	end )
+
+
+	local stairPolygon = display.newPolygon( xn, yn + height/2 - 39, { xn-width/2 + 4, height-4, xn-width/2 + 4, height-80, xn+width/2 - 4, height - 60, xn + width/2 - 4, height - 4 } )
+	--stairPolygon:setFillColor( 0.4, 1, 0.4, 0.7 )
 
 
 end
