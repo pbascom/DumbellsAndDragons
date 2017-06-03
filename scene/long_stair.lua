@@ -6,8 +6,8 @@
 -- Requirements
 local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
-local composer = require "composer"
-local json = require "json"
+local Region, Actor, AI = require "lib.Region", require "lib.Actor", require "lib.AI"
+local composer, json = require "composer", require "json"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 -- Encounter Variables
@@ -20,7 +20,7 @@ local view, phase, params, source
 local scene = composer.newScene()
 local width, height, xn, yn = display.actualContentWidth, display.actualContentHeight, display.contentCenterX, display.contentCenterY
 local background, midground, foreground, interface
-local backgroundImage, hero, heroics, prompts
+local backgroundImage
 local pauseButton, playButton
 local flavorText, prompt, promptQuantity, promptBackground
 
@@ -110,16 +110,16 @@ local READY = {
 		pauseButton.isVisible = false
 
 		-- Place sprites in initial positions
-		hero.group.x = xn - 110; hero.group.y = yn + 245
 
 	end,
 	didShow = function( event )
 
-		-- Start initial animations
+		--[[ Start initial animations
 		heroics:setAnimationByName( 1, "idle", true )
 		heroics:setAnimationByName( 2, "lookUp" )
 		print( heroics.tracks[2].alpha )
 		heroics.tracks[2].alpha = 0.65
+		--]]
 
 		-- Place initial UI
 		promptBackground = fx.newRect( xn, 3*height/16, width-80, height/4, { 0.3, 0.5 } )
@@ -228,26 +228,8 @@ function scene:create( event )
 	backgroundImage = display.newImageRect( "assets/img/longStair_bg.png", 480, 640 )
 	background:insert( backgroundImage ); backgroundImage.x = xn; backgroundImage.y = yn
 
-	-- Next, sprites and changeables. Note: first we make it work, then we generalize.
-	local data = fn.loadSkeleton( "legodude", 0.25 )
-	hero, heroics = data.skeleton, data.state
-	foreground:insert( hero.group )
 
-	Runtime:addEventListener( "enterFrame", function( event )
-		local currentTime = event.time/1500
-		local delta = currentTime - lastTime
-		lastTime = currentTime
-
-		hero.group.isVisible = true
-
-		heroics:update(delta)
-		heroics:apply(hero)
-		hero:updateWorldTransform()
-	end )
-
-
-	local stairPolygon = display.newPolygon( xn, yn + height/2 - 39, { xn-width/2 + 4, height-4, xn-width/2 + 4, height-80, xn+width/2 - 4, height - 60, xn + width/2 - 4, height - 4 } )
-	--stairPolygon:setFillColor( 0.4, 1, 0.4, 0.7 )
+	
 
 
 end
@@ -266,6 +248,24 @@ function scene:show( event )
 	--]]
 	if phase == "will" then
 		state.willShow( event )
+
+		local baseOfStairs = {xn-120, yn+240}
+		local rocks = {xn+90, yn+260}
+		local belowStairs = Region.below( baseOfStairs, rocks )
+
+		local bottomLeft = { xn-160, yn+230 }
+		local bottomRight = { xn - 60, yn +240 }
+		local topLeft = {xn+120, yn+22 }
+		local topRight = {xn+124, yn+65}
+
+		local stairs = Region.above( bottomLeft, bottomRight ) + Region.leftOf( bottomRight, topRight ) + Region.rightOf( bottomLeft, topLeft )
+		local roamZone = stairs .. belowStairs
+
+		local ai = AI.new()
+		local hero = ai:register( Actor.new( "legodude", baseOfStairs ) )
+		hero:setAnimation( "runUpStairs", true )
+		hero:wander( stairs, 1 )
+
 
 	--[[
 			Did phase
