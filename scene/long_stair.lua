@@ -7,6 +7,7 @@
 local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
 local Region, Actor, AI = require "lib.Region", require "lib.Actor", require "lib.AI"
+local Action = require "lib.Action"
 local composer, json = require "composer", require "json"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
@@ -249,8 +250,8 @@ function scene:show( event )
 	if phase == "will" then
 		state.willShow( event )
 
-		local baseOfStairs = {xn-120, yn+240}
-		local rocks = {xn+90, yn+260}
+		local baseOfStairs = {xn-120, yn+230}
+		local rocks = {xn+90, yn+250}
 		local belowStairs = Region.below( baseOfStairs, rocks )
 
 		local bottomLeft = { xn-160, yn+230 }
@@ -263,8 +264,9 @@ function scene:show( event )
 
 		local ai = AI.new()
 		local hero = ai:register( Actor.new( "legodude", baseOfStairs ) )
-		hero:setAnimation( "runUpStairs", true )
-		hero:wander( stairs, 1 )
+		--hero:setAnimation( "runUpStairs", true )
+		--hero:wander( stairs, 1 )
+		hero:setAction( Action.wanderInRegion( hero, roamZone, 30, 30 ) )
 
 
 	--[[

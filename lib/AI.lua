@@ -15,7 +15,7 @@ function AI.new()
 	function self:update( event )
 		local currentTime = event.time
 		if self.lastTime == 0 then self.lastTime = currentTime end
-		local delta = currentTime - self.lastTime
+		local delta = ( currentTime - self.lastTime ) / 1000
 		self.lastTime = currentTime
 
 		for index, actor in ipairs( self.actors ) do

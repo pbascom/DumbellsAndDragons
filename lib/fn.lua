@@ -1,8 +1,6 @@
-local data = require "lib.data"
-local theme = require "lib.theme"
-
-local spine = require "lib.spine"
-local widget = require "widget"
+local data, theme = require "lib.data", require "lib.theme"
+local spine, widget = require "lib.spine", require "widget"
+local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 local fn = {}
 
@@ -15,6 +13,11 @@ end
 -- Returns the distance between two points, given as { x1, y1 } and { x2, y2 }
 function fn.getDistance( p1, p2 )
 	return math.sqrt( (p2[1]-p1[1])^2 + (p2[2]-p1[2])^2 )
+end
+
+-- Checks if a point is inside the boundaries
+function fn.inBounds( p )
+	return p[1] > xo and p[1] < xf and p[2] > yo and p[2] < yf
 end
 
 -- Implement inheritance for object-oriented programming

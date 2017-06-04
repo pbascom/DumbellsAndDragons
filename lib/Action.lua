@@ -2,6 +2,7 @@ local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
 local Region = require "lib.Region"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
+local tau = 2*math.pi
 
 --[[
 		Action Object Definitions
@@ -72,6 +73,46 @@ function Action.moveToPoint( actor, location, speed, easing )
 
 	function self:callback()
 		self.actor:checkBehavior( { "actionComplete", "moveToPoint" } )
+	end
+
+	setmetatable( self, ActionMT )
+	return self
+end
+
+function Action.wanderInRegion( actor, region, speed, variance )
+	if variance == nil then variance = 12 end
+	local self = {
+		actor = actor,
+		region = region,
+		speed = speed,
+		direction = math.random()*tau,
+		buffer = variance*speed,
+		variance = tau/variance
+	}
+
+	function self:update( delta )
+		local step = delta*self.speed
+		local buffer = delta*self.buffer
+
+		local mod = ( math.random() - 0.5 )*self.variance
+		local newDir = self.direction+mod
+
+		local leader = {
+			self.actor.group.x + buffer*math.cos( newDir ),
+			self.actor.group.y + buffer*math.sin( newDir )
+		}
+
+		while not fn.inBounds( leader ) or not self.region.contains( leader ) do
+			newDir = newDir + 0.2*mod
+			leader = {
+				self.actor.group.x + buffer*math.cos( newDir ),
+				self.actor.group.y + buffer*math.sin( newDir )
+			}
+		end
+
+		self.actor.group:translate( step*math.cos( newDir ), step*math.sin( newDir ) )
+		self.direction = newDir
+
 	end
 
 	setmetatable( self, ActionMT )

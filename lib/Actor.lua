@@ -23,7 +23,7 @@ function Actor.new( species, location )
 	self.group.y = location[2]
 
 	function self:act( delta )
-		self.animationState:update( delta/1000 )
+		self.animationState:update( delta )
 		self.animationState:apply( self.skeleton )
 		self.skeleton:updateWorldTransform()
 		if self.action ~= nil then
