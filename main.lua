@@ -86,4 +86,5 @@ hamburger.alpha = 0.5
 --]]
 
 -- composer.gotoScene( "scene.map" )
-composer.gotoScene( "scene.long_stair", { params = { class = "ranger", level = "2" } } )
+-- composer.gotoScene( "scene.long_stair", { params = { class = "ranger", level = "2" } } )
+composer.gotoScene( "scene.object_stair", { params = { class = "ranger", level = "2" } } )

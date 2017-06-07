@@ -266,7 +266,7 @@ function scene:show( event )
 		local hero = ai:register( Actor.new( "legodude", baseOfStairs ) )
 		--hero:setAnimation( "runUpStairs", true )
 		--hero:wander( stairs, 1 )
-		hero:setAction( Action.wanderInRegion( hero, roamZone, 30, 30 ) )
+		--hero:setAction( Action.wanderInRegion( hero, roamZone, 30, 30 ) )
 
 
 	--[[

@@ -114,7 +114,7 @@ function scene:show( event )
 	elseif phase == "did" then
 		function beginWorkout()
 			composer.hideOverlay( "slideDown", 300 )
-			parent:startWorkout()
+			params.encounter.enterPhase( "READY" )
 		end
 		goButton:addEventListener( "tap", beginWorkout )
 	end

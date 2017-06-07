@@ -18,26 +18,25 @@ local scene = composer.newScene()
 
 -- Composer Lifecycle
 function scene:create( event )
-	view, params = self.view, event.params
-	script = Script.new( id, params.class, params.level )
-	encounter = Encounter.new( script, view )
-	encounter:enterState( "INTRODUCTION" ); encounter:create( event )
+	encounter = Encounter.new( self.view, event.params )
+	encounter:enterState( "INTRO" )
+	encounter:create( event )
 end
 
 function scene:show( event )
 	phase = event.phase
-	if phase == "will" then encounter.willShow( event )
-	elseif phase == "did" then encounter.didShow( event ) end
+	if phase == "will" then encounter:willShow( event )
+	elseif phase == "did" then encounter:didShow( event ) end
 end
 
 function scene:hide( event )
 	phase = event.phase
-	if phase == "will" then encounter.willHide( event )
-	elseif phase == "did" then encounter.didHide( event ) end
+	if phase == "will" then encounter:willHide( event )
+	elseif phase == "did" then encounter:didHide( event ) end
 end
 
 function scene:destroy( event )
-	encounter.destroy()
+	encounter:destroy()
 	encounter = nil
 	script = nil
 end

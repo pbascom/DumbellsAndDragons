@@ -10,6 +10,7 @@ local ui = {}
 function ui.newButton( options )
 	local g = display.newGroup()
 	local radius = options.radius or 0
+	g.callback = options.callback or nil
 
 	local b = fx.newRoundedRect( 0, 0, options.width, options.height, options.radius, options.color.default )
 	local s = fx.newDropShadow( "roundedRect", {
@@ -52,8 +53,8 @@ function ui.newButton( options )
 		if event.phase == "ended" then
 			local inXBounds = event.x >= g.x - options.width/2 and event.x <= g.x + options.width/2
 			local inYBounds = event.y >= g.y - options.height/2 and event.y <= g.y + options.height/2
-			if inXBounds and inYBounds then
-				options.callback( event )
+			if inXBounds and inYBounds and g.callback ~= nil then
+				g.callback( event )
 			end
 		end
 	end )
@@ -63,6 +64,7 @@ end
 
 function ui.newCircleButton( options )
 	local g = display.newGroup()
+	g.callback = options.callback or nil
 
 	local b = fx.newCircle( 0, 0, options.radius, options.color.default )
 	local s = fx.newDropShadow( "circle", {
@@ -129,7 +131,7 @@ function ui.newCircleButton( options )
 		end
 
 		if event.phase == "ended" and math.sqrt( (event.x-g.x)*(event.x-g.x) + (event.y-g.y)*(event.y-g.y) ) <= options.radius then
-			options.callback( event )
+			if g.callback ~= nil then g.callback( event ) end
 		end
 	end )
 

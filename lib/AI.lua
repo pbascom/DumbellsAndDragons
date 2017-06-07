@@ -6,10 +6,14 @@ local xn, yn, xo, yo, xf, yf = unpack( data.co )
 local AI = {}
 local AIMT = { __index = AI }
 
-function AI.new()
+function AI.new( encounter )
 	local self = {
+		encounter = encounter,
+
 		lastTime = 0,
-		actors = {}
+		actors = {},
+		points = {},
+		regions = {}
 	}
 
 	function self:update( event )

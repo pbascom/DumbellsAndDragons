@@ -106,28 +106,57 @@ function fx.newShadowText( options )
 	local textOptions = {
 		parent = g,
 		text = options.text,
-		x = options.x,
-		y = options.y,
+		x = 0,
+		y = 0,
 		width = options.width or nil,
-		height = options.width or nil,
+		height = options.height or nil,
 		font = options.font,
 		fontSize = options.fontSize,
 		align = options.align or nil
 	}
 
-	local textObject = display.newText( textOptions )
-	textObject:setFillColor( fn.cparse ( options.color ) )
+	g.textObject = display.newText( textOptions )
+	g.textObject:setFillColor( fn.cparse ( options.color ) )
 
-	local shadowObject = fx.newTextShadow( {
+	local shadowOptions = {
 		offsetX = options.shadowOffsetX,
 		offsetY = options.shadowOffsetY,
 		size = options.shadowSize,
 		opacity = options.shadowOpacity,
 		textOptions = textOptions
-	} )
-	shadowObject:toBack()
+	}
+	g.shadowObject = fx.newTextShadow( shadowOptions )
+	g.shadowObject:toBack()
+
+	function g:setText( string )
+		self.textObject.text = string
+		textOptions.text = string
+		if self.shadowObject ~= nil then
+			self.shadowObject = fx.newTextShadow( shadowOptions )
+			self.shadowObject:toBack()
+		end
+	end
+
+	function g:setWidth( width )
+		self.textObject.width = width
+		textOptions.width = width
+		if self.shadowObject ~= nil then
+			self.shadowObject = fx.newTextShadow( shadowOptions )
+			self.shadowObject:toBack()
+		end
+	end
+
+	function g:align( alignment )
+		self.textObject.align = alignment
+		textOptions.align = alignment
+		if self.shadowObject ~= nil then
+			self.shadowObject = fx.newTextShadow( shadowOptions )
+			self.shadowObject:toBack()
+		end
+	end
 
 	if options.parent ~= nil then options.parent:insert(g) end
+	g.x = options.x; g.y = options.y
 	return g
 end
 

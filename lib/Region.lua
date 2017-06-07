@@ -13,6 +13,38 @@ function Region.new()
 	return newInstance
 end
 
+function Region:createFromData( data, points, regions )
+	local newRegion = Region.new()
+	if data.constructor == "union" then
+		for i,value in ipairs( data.args ) do
+			if type( value ) == "string" then
+				newRegion = newRegion .. regions[ value ]
+			elseif type( value ) == "table" then
+				newRegion = newRegion .. Region:createFromData( value, points, regions )
+			end
+		end
+	elseif data.constructor == "intersection" then
+		for i, value in ipairs( data.args ) do
+			if type( value ) == "string" then
+				newRegion = newRegion + regions[ value ]
+			elseif type( value ) == "table" then
+				newRegion = newRegion + Region:createFromData( value, points, regions )
+			end
+		end
+	else
+		newRegion = Region[data.constructor]( self:pointilize( data.args, points ) )
+	end
+	return newRegion
+end
+
+function Region:pointilize( args, points )
+	local results = {}
+	for i, point in ipairs( args ) do
+		results[i] = points[ point ]
+	end
+	return unpack( results )
+end
+
 function Region.contains( point )
 	if debug then
 		local circ = display.newCircle( point[1], point[2], 12 )
