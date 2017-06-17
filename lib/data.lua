@@ -3,6 +3,7 @@ local data = {}
 local width, height, xn, yn = display.actualContentWidth, display.actualContentHeight, display.contentCenterX, display.contentCenterY
 data.width = width; data.height = height
 data.co = { xn, yn, xn - width/2 , yn - height/2, xn + width/2, yn + height/2 }
+local tau = 2*math.pi
 
 -- So weird that we need this. Don't worry, it'll be gone after testing.
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
@@ -59,6 +60,64 @@ data.sampleReadyPrompt = {
 		}
 	},
 	conclude = {
+	}
+}
+
+data.speciesData = {}
+
+data.speciesData.legodude = {
+	acceleration = 240,
+	maxSpeed = 120,
+	maxAngularSpeed = tau/2,
+	angularAcceleration = tau/4,
+	precision = tau/4
+}
+
+data.zoneData = {}
+
+data.zoneData.classHall_ranger = {
+	background = "assets/img/tavern_bg.png",
+	regionData = {
+		points = {
+			floorTopLeft = { xn-15, yn+90 },
+			floorTopRight = { xn+30, yn+90 },
+			floorBottomLeft = { xn-140, yn+320 },
+			floorBottomRight = { xn+100, yn+320 },
+			tabletopLeft = { xn-112, yn+52 },
+			tabletopRight = { xn-50, yn+52 },
+			tabletopTop = { xn-80, yn+47 },
+			tabletopBottom = { xn-80, yn+60 }
+		},
+		regions = {
+			floor = {
+				constructor = "intersection",
+				args = {
+					{ constructor = "below", args = { "floorTopLeft", "floorTopRight" } },
+					{ constructor = "rightOf", args = { "floorTopLeft", "floorBottomLeft" } },
+					{ constructor = "leftOf", args = { "floorTopRight", "floorBottomRight" } }
+				}
+			},
+			tabletop = {
+				constructor = "intersection",
+				args = {
+					{ constructor = "rightOf", args = { "tabletopLeft" } },
+					{ constructor = "leftOf", args = { "tabletopRight" } },
+					{ constructor = "above", args = { "tabletopBottom" } },
+					{ constructor = "below", args = { "tabletopTop" } }
+				}
+			},
+		}
+	},
+	actors = {
+		george = { species = "legodude", role = "npc" },
+		harold = { species = "legodude", role = "npc" },
+		margery = { species = "legodude", role = "npc" }
+	},
+	patterns = {
+		default = {
+			george = { behavior = "idleInRegion", args = { "floor", "idle", "running" } },
+			harold = { behavior = "standAtLocation", args = { "tabletop", "airSquats" } }
+		}
 	}
 }
 

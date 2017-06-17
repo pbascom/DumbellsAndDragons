@@ -28,6 +28,13 @@ function Action:callback()
 	self.actor.checkBehavior( { "actionComplete", "generic" } )
 end
 
+--[[function ActionMT.__concat( action1, action2 )
+	action1:callback = function
+		self.actor.action = action2
+	end
+	return action1
+end--]]
+
 function Action.moveToPoint( actor, location, speed, easing )
 	local self = {
 		actor = actor,
@@ -114,6 +121,23 @@ function Action.wanderInRegion( actor, region, speed, variance )
 		self.direction = newDir
 
 	end
+
+	setmetatable( self, ActionMT )
+	return self
+end
+
+function Action.smoothWander( actor, region, speed, variance )
+	if variance == nil then variance = 12 end
+	local self = {
+		actor = actor,
+		region = region,
+		speed = speed,
+		direction = math.random()*tau,
+		curl = 0,
+		variance = variance
+	}
+
+	function self:update( delta ) end
 
 	setmetatable( self, ActionMT )
 	return self

@@ -13,31 +13,33 @@ function Region.new()
 	return newInstance
 end
 
-function Region:createFromData( data, points, regions )
-	local newRegion = Region.new()
+function Region.createFromData( data, regions, points )
+	local newRegion = nil
 	if data.constructor == "union" then
-		for i,value in ipairs( data.args ) do
+		newRegion = Region.new()
+		for key, value in pairs( data.args ) do
 			if type( value ) == "string" then
 				newRegion = newRegion .. regions[ value ]
 			elseif type( value ) == "table" then
-				newRegion = newRegion .. Region:createFromData( value, points, regions )
+				newRegion = newRegion .. Region.createFromData( value, regions, points )
 			end
 		end
 	elseif data.constructor == "intersection" then
-		for i, value in ipairs( data.args ) do
+		newRegion = Region.new()
+		for key, value in pairs( data.args ) do
 			if type( value ) == "string" then
 				newRegion = newRegion + regions[ value ]
 			elseif type( value ) == "table" then
-				newRegion = newRegion + Region:createFromData( value, points, regions )
+				newRegion = newRegion + Region.createFromData( value, regions, points )
 			end
 		end
 	else
-		newRegion = Region[data.constructor]( self:pointilize( data.args, points ) )
+		newRegion = Region[data.constructor]( Region.pointilize( data.args, points ) )
 	end
 	return newRegion
 end
 
-function Region:pointilize( args, points )
+function Region.pointilize( args, points )
 	local results = {}
 	for i, point in ipairs( args ) do
 		results[i] = points[ point ]
@@ -116,7 +118,7 @@ end
 
 function Region.above(...)
 	local newInstance = Region.new()
-	if n == 1 then
+	if arg.n == 1 then
 		newInstance.contains = function( point ) return point[2] < arg[1][2] end
 		if debug then
 			local circ = display.newCircle( arg[1][1], arg[1][2], 12 )
@@ -149,7 +151,7 @@ end
 
 function Region.leftOf(...)
 	local newInstance = Region.new()
-	if n == 1 then
+	if arg.n == 1 then
 		newInstance.contains = function( point ) return point[1] < arg[1][1] end
 		if debug then
 			local circ = display.newCircle( arg[1][1], arg[1][2], 12 )
@@ -182,7 +184,7 @@ end
 
 function Region.rightOf(...)
 	local newInstance = Region.new()
-	if n == 1 then
+	if arg.n == 1 then
 		newInstance.contains = function( point ) return point[1] > arg[1][1] end
 		if debug then
 			local circ = display.newCircle( arg[1][1], arg[1][2], 12 )

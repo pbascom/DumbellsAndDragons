@@ -116,7 +116,10 @@ end
 function Script:loadAssets()
 	-- For now, implement Long Stair directly.
 	local assets = {}
-	assets.actors = { role = "hero", species = "legodude" }
+	assets.actors = { { role = "hero", species = "legodude" } }
+
+	--for asset in assets.actors do end
+		
 	
 	local regionData = data.sampleRegionData -- will one day be json.parse
 	assets.points = regionData.points

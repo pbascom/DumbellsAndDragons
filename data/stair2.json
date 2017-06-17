@@ -5,9 +5,6 @@
 		"description": "The path is steep and jagged, a crude stair that winds into the Hills and vanishes out of sight. This journey won't be easy.",
 		"duration": "25 minutes",
 		"equipment": "Track or Treadmill, Exercise Mat",
-		"poi": {
-			"baseOfStairs": [ 40, 50 ],
-		}
 	},
 	"mods":{
 		"ranger 6+":{ "duration": "40 minutes" },
@@ -25,19 +22,19 @@
 		},
 		"regions": {
 			"belowStairs": {
-				"type": "intersection", "args": [
-					{ "type": "below", "args": [ "baseOfStairs", "rocks" ] }
+				"constructor": "intersection", "args": [
+					{ "constructor": "below", "args": [ "baseOfStairs", "rocks" ] }
 				]
 			},
 			"stairs": {
-				"type": "intersection", "args": [
-					{ "type": "above", "args": [ "stairsBottomLeft", "stairsBottomRight" ] },
-					{ "type": "leftOf", "args": [ "stairsBottomRight", "stairsTopRight" ] },
-					{ "type": "rightOf", "args": [ "stairsBottomLeft", "stairsTopLeft" ] }
+				"constructor": "intersection", "args": [
+					{ "constructor": "above", "args": [ "stairsBottomLeft", "stairsBottomRight" ] },
+					{ "constructor": "leftOf", "args": [ "stairsBottomRight", "stairsTopRight" ] },
+					{ "constructor": "rightOf", "args": [ "stairsBottomLeft", "stairsTopLeft" ] }
 				]
 			},
 			"roamZone": {
-				"type": "union", "args": [
+				"constructor": "union", "args": [
 					"belowStairs",
 					"stairs"
 				]

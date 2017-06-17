@@ -4,41 +4,69 @@ local Region, Action, Actor = require "lib.Region", require "lib.Action", requir
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 local AI = {}
-local AIMT = { __index = AI }
 
-function AI.new( encounter )
+function AI:update( event )
+	local currentTime = event.time
+	if self.lastTime == 0 then self.lastTime = currentTime end
+	local delta = ( currentTime - self.lastTime ) / 1000
+	self.lastTime = currentTime
+
+	for i, listener in ipairs( self.listeners ) do
+		listener:update( delta )
+	end
+end
+
+function AI:register( listener )
+	if not self.listeners:contains( listener ) then
+		table.insert( self.listeners, listener)
+	end
+end
+
+function AI:unregister( listener )
+	if self.listeners:contains( listener ) then
+		table.remove( self.listeners, listener)
+	end
+end
+
+function AI:activate( ... )
+	for i, actor in ipairs( arg ) do
+		if not self.listeners:contains( actor ) then
+			table.insert( self.listeners, actor )
+			actor.group.isVisible = true
+		end
+	end
+end
+
+function AI:deactivate( ... )
+	for i, actor in ipairs( arg ) do
+		if self.listeners:contains( actor ) then
+			table.remove( self.listeners, actor )
+			actor.group.isVisible = false
+		end
+	end
+end
+
+function AI:place( actor, point )
+	actor.group.x = point[1]
+	actor.group.y = point[2]
+end
+
+function AI.new( zone, actors )
 	local self = {
-		encounter = encounter,
-
+		zone = zone,
 		lastTime = 0,
-		actors = {},
-		points = {},
-		regions = {}
+		actors = actors,
+		listeners = {},
 	}
 
-	function self:update( event )
-		local currentTime = event.time
-		if self.lastTime == 0 then self.lastTime = currentTime end
-		local delta = ( currentTime - self.lastTime ) / 1000
-		self.lastTime = currentTime
-
-		for index, actor in ipairs( self.actors ) do
-			actor:act( delta )
-		end
+	for i, actor in ipairs( self.actors ) do
+		actor.ai = self
 	end
-
-	function self:register( actor )
-		if type( self.actors ) ~= "table" then
-			self.actors = {}
-		end
-		table.insert( self.actors, actor )
-		return actor
-	end
-
-	setmetatable( self, AIMT )
 
 	Runtime:addEventListener( "enterFrame", function( event ) self:update( event ) end )
 
+	setmetatable( self, { __index = AI } )
+	setmetatable( self.listeners, fn.betterMetatable )
 	return self
 end
 

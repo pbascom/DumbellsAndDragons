@@ -2,6 +2,7 @@ local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
 local Region, Action, Behavior = require "lib.Region", require "lib.Action", require "lib.Behavior"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
+local tau = 2*math.pi
 
 --[[
 		Actor Object definitions
@@ -9,33 +10,68 @@ local xn, yn, xo, yo, xf, yf = unpack( data.co )
 local Actor = {}
 local ActorMT = { __index = Actor }
 
-function Actor.new( species, location )
+function Actor.new( species, roles )
 	local spineData = fn.loadSpineObject( species, 0.25 )
 	local self = {
+		species = species,
+		roles = {},
 		skeleton = spineData.skeleton,
 		group = spineData.skeleton.group,
 		animationState = spineData.animationState,
 		action = nil,
-		behavior = nil
+		behavior = nil,
+
+		steering = {
+			position = spineData.skeleton.group,
+			speed = 0,
+			maxSpeed = data.speciesData[species].maxSpeed,
+			acceleration = data.speciesData[species].acceleration,
+			orientation = tau/4,
+			aim = tau/4,
+			precision = data.speciesData[species].precision,
+			angularSpeed = 0,
+			maxAngularSpeed = data.speciesData[species].maxAngularSpeed,
+			angularAcceleration = data.speciesData[species].angularAcceleration
+		}
 	}
 
-	self.group.x = location[1]
-	self.group.y = location[2]
+	-- Populate Roles table
+	if roles ~= nil then
+		for i, value in ipairs( roles ) do
+			self.roles[ value ] = true
+		end
+	end
 
-	-- Track 1 is idle. 2 is animation, 3 is misc, 4 is adjustment.
+	-- Actors start inactive
+	self.group.isVisible = false
+
+	-- Track 1 is idle. 2 is animation, 3 and 4 are misc, 5 is adjustment.
 	self.animationState:setAnimationByName( 1, "idle", true )
 
 	setmetatable( self, ActorMT )
 	return self
 end
 
-function Actor:act( delta )
+function Actor:update( delta )
 	self.animationState:update( delta )
 	self.animationState:apply( self.skeleton )
 	self.skeleton:updateWorldTransform()
 	if self.action ~= nil then
 		self.action:update( delta )
 	end
+end
+
+-- Role management methods
+function Actor:hasRole( role )
+	return self.roles[ role ] ~= nil
+end
+
+function Actor:addRole( role )
+	self.roles[ role ] = true
+end
+
+function Actor:removeRole( role )
+	if self.roles[ role ] ~= nil then self.roles[ role ] = nil end
 end
 
 -- Animation control methods
@@ -58,9 +94,9 @@ end
 
 function Actor:setAdjustment( adjustment, opacity )
 	if adjustment ~= nil then
-		self.animationState:setAnimationByName( 4, adjustment, true, opacity )
+		self.animationState:setAnimationByName( 5, adjustment, true, opacity )
 	else
-		self.animationState:setEmptyAnimation( 4 )
+		self.animationState:setEmptyAnimation( 5 )
 	end
 end
 

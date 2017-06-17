@@ -4,14 +4,11 @@
 
 
 -- Requirements
-local sceneName = "map"
-local composer = require "composer"
-local widget = require "widget"
-local fn = require "lib.fn"
-local raleway, unifraktur = "assets/font/Raleway 500.ttf", "assets/font/UnifrakturCook 700.ttf"
-local raleway_bold = "assets/font/Raleway 700.ttf"
-
-
+local data, theme = require "lib.data", require "lib.theme"
+local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
+local composer, json, widget = require "composer", require "json", require "widget"
+local Encounter, Script, Region = require "lib.Encounter", require "lib.Script", require "lib.Region"
+local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 -- Scene Variables
 local scene = composer.newScene()
@@ -22,7 +19,7 @@ local view, phase, params
 
 local width, height, xn, yn = display.actualContentWidth, display.actualContentHeight, display.contentCenterX, display.contentCenterY
 local mbw, ubw = 60, width/4.5 -- Map button width, UI button width
-local ubp = (width-4*ubw)/5 -- UI button padding
+local buttonWidth = width/5.25; local buttonPadding = buttonWidth/4
 
 function getGoTo( scene, options )
 	function goTo( event )
@@ -52,7 +49,6 @@ function scene:create( event )
 
 	interface = display.newGroup()
 	view:insert( interface )
-	interface.x, interface.y = xn-width/2, yn-height/2 --Letterbox correction
 
 
 	-- Content
@@ -68,7 +64,7 @@ function scene:create( event )
 			y = yn-125,
 			defaultFile = "assets/img/mbutton_stair.png",
 			isEnabled = false,
-			onRelease = getGoTo("long_stair", { effect = "fade", time = 300, params = { class = "ranger", level = "2" } } )
+			onRelease = getGoTo("object_stair", { effect = "fade", time = 300, params = { class = "ranger", level = "2" } } )
 		}),
 
 		--[[
@@ -89,96 +85,84 @@ function scene:create( event )
 		midground:insert(value)
 	end
 
-	uibutton = {
+	local character = ui.newImageButton({
+		hitWidth = buttonWidth,
+		hitHeight = buttonWidth,
+		imageHeight = buttonWidth + 2*buttonPadding,
+		imageWidth = buttonWidth + 2*buttonPadding,
+		image = "assets/img/icon_character.png"
+	})
+	interface:insert( character )
+	character.x = xo + buttonPadding + buttonWidth/2
+	character.y = yf - buttonPadding - buttonWidth/2
 
-		character = widget.newButton({
-			label = "C",
-			shape = "rect",
-			fillColor = {
-				default = { 0.2, 0.2, 0.2 },
-				over = { 0.8, 0.8, 0.8 }
-			},
-			labelColor = {
-				default = { 1, 1, 1 },
-				over = { 0.2, 0.2, 0.2 }
-			},
-			width = ubw,
-			height = ubw,
-			x = (ubw/2)+ubp,
-			y = height-(ubw/2)-ubp,
-			isEnabled = true,
-			onRelease = getGoTo( "overlay.character", { effect = "fromBottom", time = 300 } )
-		}),
+	local achievements = ui.newImageButton({
+		hitWidth = buttonWidth,
+		hitHeight = buttonWidth,
+		imageHeight = buttonWidth + 2*buttonPadding,
+		imageWidth = buttonWidth + 2*buttonPadding,
+		image = "assets/img/icon_achievements.png"
+	});
+	interface:insert( achievements )
+	achievements.x = xo + buttonPadding*2 + 3*buttonWidth/2
+	achievements.y = yf - buttonPadding - buttonWidth/2
 
-		achievements = widget.newButton({
-			label = "A",
-			shape = "rect",
-			fillColor = {
-				default = { 0.2, 0.2, 0.2 },
-				over = { 0.8, 0.8, 0.8 }
-			},
-			labelColor = {
-				default = { 1, 1, 1 },
-				over = { 0.2, 0.2, 0.2 }
-			},
-			width = ubw,
-			height = ubw,
-			x = (ubw*1.5)+2*ubp,
-			y = height-(ubw/2)-ubp,
-			isEnabled = true
-		}),
+	local classHall = fx.newRect( unpack{
+		xo + buttonPadding*3 + 5*buttonWidth/2,
+		yf - buttonPadding - buttonWidth/2,
+		buttonWidth,
+		buttonWidth,
+		{ 0.2, 0.2, 0.2 }
+	} )
+	interface:insert( classHall )
 
-		classHall = widget.newButton({
-			label = "H",
-			shape = "rect",
-			fillColor = {
-				default = { 0.2, 0.2, 0.2 },
-				over = { 0.8, 0.8, 0.8 }
-			},
-			labelColor = {
-				default = { 1, 1, 1 },
-				over = { 0.2, 0.2, 0.2 }
-			},
-			width = ubw,
-			height = ubw,
-			x = (ubw*2.5)+3*ubp,
-			y = height-(ubw/2)-ubp,
-			isEnabled = true
-		}),
+	local multiplayer = fx.newRect( unpack{
+		xo + buttonPadding*4 + 7*buttonWidth/2,
+		yf - buttonPadding - buttonWidth/2,
+		buttonWidth,
+		buttonWidth,
+		{ 0.2, 0.2, 0.2 }
+	} )
+	interface:insert( multiplayer )
 
-		accountSettings = widget.newButton({
-			label = "S",
-			shape = "rect",
-			fillColor = {
-				default = { 0.2, 0.2, 0.2 },
-				over = { 0.8, 0.8, 0.8 }
-			},
-			labelColor = {
-				default = { 1, 1, 1 },
-				over = { 0.2, 0.2, 0.2 }
-			},
-			width = ubw,
-			height = ubw,
-			x = (ubw*3.5)+4*ubp,
-			y = height-(ubw/2)-ubp,
-			isEnabled = true
-		}),
-	}
+	--[[
+	
+	local classHall = widget.newButton({
+		label = "H",
+		shape = "rect",
+		fillColor = {
+			default = { 0.2, 0.2, 0.2 },
+			over = { 0.8, 0.8, 0.8 }
+		},
+		labelColor = {
+			default = { 1, 1, 1 },
+			over = { 0.2, 0.2, 0.2 }
+		},
+		width = ubw,
+		height = ubw,
+		x = (ubw*2.5)+3*ubp,
+		y = height-(ubw/2)-ubp,
+		isEnabled = true
+	}),
 
-	uiTray = display.newRect( interface, width/2, height-(ubw/2)-ubp, width, ubw+2*ubp )
-	uiTray:setFillColor( 0.9 )
-
-	uiTrayShadow = display.newRect( interface, width/2, height-(ubw+2*ubp)-32, width, 64 )
-	uiTrayShadow.fill = {
-		type = "image",
-		filename = "assets/img/shadow.png"
-	}
-
-	for key,value in pairs(uibutton) do
-		interface:insert(value)
-	end
-
-	--interface.x = xn-(width/2)
+	local accountSettings = widget.newButton({
+		label = "S",
+		shape = "rect",
+		fillColor = {
+			default = { 0.2, 0.2, 0.2 },
+			over = { 0.8, 0.8, 0.8 }
+		},
+		labelColor = {
+			default = { 1, 1, 1 },
+			over = { 0.2, 0.2, 0.2 }
+		},
+		width = ubw,
+		height = ubw,
+		x = (ubw*3.5)+4*ubp,
+		y = height-(ubw/2)-ubp,
+		isEnabled = true
+	}),
+	--]]
 
 end
 
@@ -210,7 +194,6 @@ end
 
 function scene:hide( event )
 	phase = event.phase
-
 end
 
 

@@ -138,6 +138,73 @@ function ui.newCircleButton( options )
 	return g
 end
 
+function ui.newImageButton( options )
+	local g = display.newGroup()
+	g.callback = options.callback or nil
+
+	local hitWidth, hitHeight = options.hitWidth or nil, options.hitHeight or nil
+	local imageWidth, imageHeight = options.imageWidth or nil, options.imageHeight or nil
+	if options.width ~= nil then hitWidth, imageWidth = options.width, options.width end
+	if options.height ~= nil then hitHeight, imageHeight = options.height, options.height end
+
+	local h = display.newRect( 0, 0, hitWidth, hitHeight )
+	h.isVisible = false; h.isHitTestable = true
+	local i = display.newImageRect( g, options.image, imageWidth, imageHeight )
+	i.isHitTestable = false; g:insert( h )
+
+	-- Insert shadow creation here
+
+	local t = nil
+	if options.label ~= nil then
+		t = display.newText( {
+			text = options.label,
+			font = options.fontFamily,
+			fontSize = options.fontSize,
+			align = "center",
+		} )
+		t:setFillColor( fn.cparse( options.labelColor.default ) )
+
+		if options.labelShadow == true then
+			local d = display.newGroup();
+			d:insert( fx.newTextShadow( {
+				offsetX = options.shadowOffsetX,
+				offsetY = options.shadowOffsetY,
+				size = options.shadowSize,
+				opacity = options.shadowOpacity,
+				textOptions = {
+					text = options.label,
+					font = options.fontFamily,
+					fontSize = options.fontSize,
+					align = "center"
+				}
+			} ) )
+			d:insert(t); g:insert(d)
+			d.y = ( options.height + options.fontSize )/2
+		else
+			g:insert(t)
+			t.y = ( options.height + options.fontSize )/2
+		end
+	end
+
+	h:addEventListener( "touch", function( event ) 
+		if event.phase == "began" then
+			-- Over look
+		elseif event.phase == "ended" or event.phase == "cancelled" then
+			-- Reset look
+		end
+
+		if event.phase == "ended" then
+			local inXBounds = event.x >= g.x - options.width/2 and event.x <= g.x + options.width/2
+			local inYBounds = event.y >= g.y - options.height/2 and event.y <= g.y + options.height/2
+			if inXBounds and inYBounds and g.callback ~= nil then
+				g.callback( event )
+			end
+		end
+	end )
+
+	return g
+end
+
 function ui.newTimer( parentGroup, x, y, width, height, mode, theme, duration )
 
 	local timer = {}
