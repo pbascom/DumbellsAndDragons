@@ -155,6 +155,10 @@ function fx.newShadowText( options )
 		end
 	end
 
+	function g:setColor( color )
+		self.textObject:setFillColor( fn.cparse( color ) )
+	end
+
 	if options.parent ~= nil then options.parent:insert(g) end
 	g.x = options.x; g.y = options.y
 	return g

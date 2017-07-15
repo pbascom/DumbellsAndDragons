@@ -8,64 +8,14 @@ local tau = 2*math.pi
 -- So weird that we need this. Don't worry, it'll be gone after testing.
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
--- Sample json information (parsed)
-data.sampleRegionData = {
-points = {
-		baseOfStairs = { xn-120, yn+240 },
-		rocks = { xn+90, yn+260 },
-		stairsBottomLeft = { xn-160, yn+230 },
-		stairsBottomRight = { xn-60, yn+240 },
-		stairsTopLeft = { xn+120, yn+22 },
-		stairsTopRight = { xn+124, yn+65 },
-		offScreenLeft = { xn-140, yo - 40 },
-	},
-	regions = {
-		belowStairs = {
-			constructor = "intersection",
-			args = {
-				{ constructor = "below", args = { "baseOfStairs", "rocks" } }
-			}
-		},
-		stairs = {
-			constructor = "intersection",
-			args = {
-				{ constructor = "above", args = { "stairsBottomLeft", "stairsBottomRight" } },
-				{ constructor = "leftOf", args = { "stairsBottomRight", "stairsTopRight" } },
-				{ constructor = "rightOf", args = { "stairsBottomLeft", "stairsTopLeft" } }
-			}
-		},
-		roamZone = {
-			constructor = "union",
-			args = {
-				"belowStairs",
-				"stairs"
-			}
-		}
-	}
-}
-
-data.sampleReadyPrompt = {
-	prepare = {
-		actions = {
-			hero = { standAtLocation = "offScreenLeft" }
-		}
-	},
-	proceed = {
-		actions = {
-			hero = { moveToPoint = "baseOfStairs" }
-		},
-		display = {
-			flavor = "Nothing to do but climb...",
-			prompt = { "Air Squats", 15 }
-		}
-	},
-	conclude = {
-	}
+data.sound = {
+	bell = audio.loadSound( "assets/sound/bell.wav" ),
+	applause = audio.loadSound( "assets/sound/applause.wav" )
 }
 
 data.speciesData = {}
 
-data.speciesData.legodude = {
+data.speciesData.default = {
 	acceleration = 240,
 	maxSpeed = 120,
 	maxAngularSpeed = tau/2,
@@ -73,6 +23,13 @@ data.speciesData.legodude = {
 	precision = tau/4
 }
 
+data.speciesData.DragonChick = data.speciesData.default
+data.speciesData.LegoDude = data.speciesData.default
+
+
+--[[
+		Zone Data
+--]]
 data.zoneData = {}
 
 data.zoneData.classHall_ranger = {
@@ -119,6 +76,21 @@ data.zoneData.classHall_ranger = {
 			harold = { behavior = "standAtLocation", args = { "tabletop", "airSquats" } }
 		}
 	}
+}
+
+--[[
+		Animation data
+--]]
+data.animData = {
+	airSquat = {},
+	lunge = {
+		displacement = "right"
+	},
+	highKnee = {},
+	buttKick = {},
+	run = {},
+	burpee = {},
+	birdDog = {}
 }
 
 return data

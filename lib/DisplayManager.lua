@@ -8,8 +8,10 @@ local DisplayManagerMT = { __index = DisplayManager }
 
 function DisplayManager.new( group )
 	local self = {
-		group = group
+		group = group,
+		isHidden = true
 	}
+	self.group.isVisible = false
 
 	setmetatable( self, DisplayManagerMT )
 	return self
@@ -17,17 +19,21 @@ end
 
 function DisplayManager:build()
 	-- Prompt Display creation
-	self.promptBox = fx.newRect( xn, yo + theme.promptBoxPadding + theme.promptBoxHeight/2 + theme.promptBoxVerticalPadding, data.width - 2*theme.promptBoxPadding, theme.promptBoxHeight, theme.promptBoxColor )
-	self.group:insert( self.promptBox )
+	self.questGiver = display.newImageRect( self.group, "assets/img/rangerface.png", 98, 113 )
+	self.questGiver.x = xo + 47 + 10; self.questGiver.y = yo + 56 + 10
+
+	self.promptBox = display.newImageRect( self.group, "assets/img/promptBubble.png", 270, 130 )
+	self.promptBox.x = xf - 135 - 10; self.promptBox.y = yo + 65 + 10
 
 	self.flavorText = fx.newShadowText( {
 		text = "",
-		x = xn,
-		y = yo + theme.promptBoxPadding + theme.flavorVerticalDisplacement + theme.promptBoxVerticalPadding,
+		width = 240,
+		x = xf - 135 + 25,
+		y = yo + 75 - 35,
 		font = theme.baseFontFamily,
 		fontSize = theme.flavorFontSize,
-		color = theme.white,
-		align = "center",
+		color = theme.black,
+		align = "left",
 		shadowOffsetX = theme.shadow.x.medium,
 		shadowOffsetY = theme.shadow.y.medium,
 		shadowSize = theme.shadow.size.medium,
@@ -35,16 +41,16 @@ function DisplayManager:build()
 	} )
 	self.group:insert( self.flavorText )
 
-	local widthUnit = ( (xf-xo) - 2*theme.promptBoxPadding - 3*theme.promptTextPadding ) / 3
+	local widthUnit = ( xf - xo - theme.promptTextPadding*3 )/2
 	self.promptLabel = fx.newShadowText( {
 		text = "",
-		x = xf - theme.promptBoxPadding - theme.promptTextPadding - widthUnit,
-		y = yo + theme.promptBoxPadding + theme.promptTextVerticalDisplacement + theme.promptBoxVerticalPadding,
-		width = 2*widthUnit,
+		x = xf - 135 - 10,
+		y = yo + 72,
+		width = widthUnit,
 		font = theme.boldFontFamily,
 		fontSize = theme.promptFontSize,
-		color = theme.white,
-		align = "left",
+		color = theme.black,
+		align = "center",
 		shadowOffsetX = theme.shadow.x.medium,
 		shadowOffsetY = theme.shadow.y.medium,
 		shadowSize = theme.shadow.size.medium,
@@ -54,13 +60,13 @@ function DisplayManager:build()
 
 	self.promptNumber = fx.newShadowText( {
 		text = "",
-		x = xo + widthUnit/2 + theme.promptBoxPadding + theme.promptTextPadding,
-		y = yo + theme.promptBoxPadding + theme.promptTextVerticalDisplacement + theme.promptBoxVerticalPadding,
+		x = xf - 135 - 10,
+		y = yo + 72 + 36,
 		width = widthUnit,
 		font = theme.boldFontFamily,
 		fontSize = theme.promptFontSize,
 		color = theme.green,
-		align = "right",
+		align = "center",
 		shadowOffsetX = theme.shadow.x.medium,
 		shadowOffsetY = theme.shadow.y.medium,
 		shadowSize = theme.shadow.size.medium,
@@ -130,13 +136,64 @@ function DisplayManager:build()
 	return self.playButton, self.pauseButton
 end
 
-function DisplayManager:setFlavorText( string )
+function DisplayManager:setFlavor( string )
 	self.flavorText:setText( string )
 end
 
-function DisplayManager:displayPrompt( label, number )
+function DisplayManager:setPrompt( label, number )
 	self.promptLabel:setText( label )
 	self.promptNumber:setText( tostring( number ) )
+end
+
+function DisplayManager:setConfiguration( configuration )
+	if self.isHidden then
+		self.isHidden = false
+		self.group.isVisible = true
+	end
+	if configuration == "active" then
+		self.promptBox.isVisible = false
+		self.questGiver.isVisible = false
+		self.flavorText.isVisible = false
+		
+		--self.pauseButton.isVisible = true
+		self.pauseButton.x = theme.buttonMiddleLeft.x
+		self.pauseButton.y = theme.buttonMiddleLeft.y
+
+		self.playButton.x = theme.buttonBottomCenter.x
+		self.playButton.y = theme.buttonBottomCenter.y
+		self.playButton:setLabelText( "Done" )
+
+		self.promptLabel.x = xo + self.promptLabel.width/2 + theme.promptTextPadding
+		self.promptLabel.y = yo + theme.promptTextPadding + theme.promptFontSize
+		self.promptLabel:setColor( theme.white )
+
+		self.promptNumber.x = xf - self.promptNumber.width/2 - theme.promptTextPadding
+		self.promptNumber.y = yo + theme.promptTextPadding + theme.promptFontSize
+	end
+	if configuration == "init" then
+		self.promptBox.isVisible = true
+		self.questGiver.isVisible = true
+		self.flavorText.isVisible = true
+
+		self.pauseButton.isVisible = false
+
+		self.playButton.isVisible = true
+		self.playButton:setLabelText( "Begin" )
+		self.playButton.x = theme.buttonMiddleRight.x
+		self.playButton.y = theme.buttonMiddleRight.y
+
+		self.promptLabel.y = yo + 72
+		self.promptLabel.x = xf - 135 - 10
+		self.promptLabel:setColor( theme.black )
+
+		self.promptNumber.y = yo + 72 + 36
+		self.promptNumber.x = xf - 135 - 10
+	end
+end
+
+function DisplayManager:hide()
+	self.isHidden = true
+	self.group.isVisible = false
 end
 
 return DisplayManager

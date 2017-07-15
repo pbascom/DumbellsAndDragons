@@ -11,7 +11,7 @@ local Actor = {}
 local ActorMT = { __index = Actor }
 
 function Actor.new( species, roles )
-	local spineData = fn.loadSpineObject( species, 0.25 )
+	local spineData = fn.loadSpineObject( species, 0.2 )
 	local self = {
 		species = species,
 		roles = {},
@@ -20,6 +20,7 @@ function Actor.new( species, roles )
 		animationState = spineData.animationState,
 		action = nil,
 		behavior = nil,
+		movement = nil,
 
 		steering = {
 			position = spineData.skeleton.group,
@@ -45,9 +46,6 @@ function Actor.new( species, roles )
 	-- Actors start inactive
 	self.group.isVisible = false
 
-	-- Track 1 is idle. 2 is animation, 3 and 4 are misc, 5 is adjustment.
-	self.animationState:setAnimationByName( 1, "idle", true )
-
 	setmetatable( self, ActorMT )
 	return self
 end
@@ -58,6 +56,9 @@ function Actor:update( delta )
 	self.skeleton:updateWorldTransform()
 	if self.action ~= nil then
 		self.action:update( delta )
+	end
+	if self.movement ~= nil then
+		self.movement:update( delta )
 	end
 end
 
@@ -85,10 +86,11 @@ end
 
 function Actor:setAnimation( animation, loop, opacity )
 	if opacity == nil then opacity = 1 end
-	if animation ~= nil then
-		self.animationState:setAnimationByName( 2, animation, false or loop, opacity )
-	else
+	if loop == nil then loop = true end
+	if animation == "empty" then
 		self.animationState:setEmptyAnimation( 2 )
+	else
+		self.animationState:setAnimationByName( 2, animation, loop, opacity )
 	end
 end
 
@@ -113,8 +115,13 @@ function Actor:setAction( action )
 	self.action = action
 end
 
-function Actor:moveToPoint( location, speed, easing )
-	self:setAction( Action.moveToPoint( self, location, speed, easing ) )
+function Actor:moveToPoint( location, animation )
+	if animation ~= nil then
+		print( "moveToPoint: " .. animation )
+		self:setAction( Action.moveToPoint( self, location, animation ) )
+	else
+		self:setAction( Action.moveToPoint( self, location ) )
+	end
 end
 
 -- Behavior control methods

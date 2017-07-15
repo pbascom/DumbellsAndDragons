@@ -18,13 +18,15 @@ end
 
 function AI:register( listener )
 	if not self.listeners:contains( listener ) then
-		table.insert( self.listeners, listener)
+		table.insert( self.listeners, listener )
 	end
 end
 
 function AI:unregister( listener )
-	if self.listeners:contains( listener ) then
-		table.remove( self.listeners, listener)
+	for i, l in ipairs( self.listeners ) do
+		if l == listener then
+			table.remove( self.listeners, i )
+		end
 	end
 end
 
@@ -47,21 +49,18 @@ function AI:deactivate( ... )
 end
 
 function AI:place( actor, point )
-	actor.group.x = point[1]
-	actor.group.y = point[2]
+	actor.group.x = point.x
+	actor.group.y = point.y
 end
 
 function AI.new( zone, actors )
 	local self = {
 		zone = zone,
-		lastTime = 0,
 		actors = actors,
-		listeners = {},
-	}
 
-	for i, actor in ipairs( self.actors ) do
-		actor.ai = self
-	end
+		listeners = {},
+		lastTime = 0
+	}
 
 	Runtime:addEventListener( "enterFrame", function( event ) self:update( event ) end )
 

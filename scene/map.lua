@@ -7,7 +7,6 @@
 local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
 local composer, json, widget = require "composer", require "json", require "widget"
-local Encounter, Script, Region = require "lib.Encounter", require "lib.Script", require "lib.Region"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 -- Scene Variables
@@ -64,10 +63,9 @@ function scene:create( event )
 			y = yn-125,
 			defaultFile = "assets/img/mbutton_stair.png",
 			isEnabled = false,
-			onRelease = getGoTo("object_stair", { effect = "fade", time = 300, params = { class = "ranger", level = "2" } } )
+			onRelease = getGoTo("long_stair", { effect = "fade", time = 300, params = { class = "ranger", level = "2" } } )
 		}),
 
-		--[[
 		spire = widget.newButton({
 			width = mbw,
 			height = mbw,
@@ -75,9 +73,8 @@ function scene:create( event )
 			y = yn-245,
 			defaultFile = "assets/img/mbutton_spire.png",
 			isEnabled = false,
-			onRelease = getGoTo("long_stair", { effect = "fade", time = 300, params = { class = "fighter", level = "2" }  } )
+			onRelease = getGoTo("classHall_ranger", { effect = "fade", time = 300, params = { class = "fighter", level = "2" }  } )
 		}),
-		--]]
 
 	}
 
@@ -90,7 +87,7 @@ function scene:create( event )
 		hitHeight = buttonWidth,
 		imageHeight = buttonWidth + 2*buttonPadding,
 		imageWidth = buttonWidth + 2*buttonPadding,
-		image = "assets/img/icon_character.png"
+		image = "icon_character"
 	})
 	interface:insert( character )
 	character.x = xo + buttonPadding + buttonWidth/2
@@ -101,8 +98,8 @@ function scene:create( event )
 		hitHeight = buttonWidth,
 		imageHeight = buttonWidth + 2*buttonPadding,
 		imageWidth = buttonWidth + 2*buttonPadding,
-		image = "assets/img/icon_achievements.png"
-	});
+		image = "icon_achievements"
+	})
 	interface:insert( achievements )
 	achievements.x = xo + buttonPadding*2 + 3*buttonWidth/2
 	achievements.y = yf - buttonPadding - buttonWidth/2
@@ -116,14 +113,16 @@ function scene:create( event )
 	} )
 	interface:insert( classHall )
 
-	local multiplayer = fx.newRect( unpack{
-		xo + buttonPadding*4 + 7*buttonWidth/2,
-		yf - buttonPadding - buttonWidth/2,
-		buttonWidth,
-		buttonWidth,
-		{ 0.2, 0.2, 0.2 }
-	} )
-	interface:insert( multiplayer )
+	local messages = ui.newImageButton({
+		hitWidth = buttonWidth,
+		hitHeight = buttonWidth,
+		imageHeight = buttonWidth + 2*buttonPadding,
+		imageWidth = buttonWidth + 2*buttonPadding,
+		image = "icon_messages"
+	});
+	interface:insert( messages )
+	messages.x = xo + buttonPadding*4 + 7*buttonWidth/2
+	messages.y = yf - buttonPadding - buttonWidth/2
 
 	--[[
 	

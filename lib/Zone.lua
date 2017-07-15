@@ -1,7 +1,7 @@
 local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
 local composer = require "composer"
-local Region, AI, Actor = require "lib.region", require "lib.AI", require "lib.Actor"
+local AI, Actor = require "lib.AI", require "lib.Actor"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 local Zone = {}
@@ -60,8 +60,6 @@ function Zone.new( id, points, regions, actors, states )
 
 		states = states,
 		state = {},
-
-		ai = AI.new( self, actors )
 	}
 	setmetatable( self, { __index = Zone } )
 	setmetatable( actors, { __index = fn.betterTables } )
@@ -70,6 +68,7 @@ function Zone.new( id, points, regions, actors, states )
 end
 
 function Zone:init( scene, event )
+	self.ai = AI.new( self, self.actors )
 	self.view = scene.view
 
 	self.background = display.newGroup()
@@ -84,7 +83,7 @@ function Zone:init( scene, event )
 	self.interface = display.newGroup()
 	self.view:insert( self.interface )
 	
-	local background = display.newImageRect( "assets/img/" .. self.id .. "_bg.png", theme.fullWidth, theme.fullHeight )
+	local background = display.newImageRect( "assets/img/" .. self.id .. "_background.jpg", theme.fullWidth, theme.fullHeight )
 	self.background:insert( background ); background.x = xn; background.y = yn
 
 	if self.states.DEFAULT ~= nil then self:enterState( "DEFAULT" ) end

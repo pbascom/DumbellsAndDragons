@@ -5,6 +5,9 @@ local fx = require "lib.fx"
 
 local widget = require "widget"
 
+local xn, yn, xo, yo, xf, yf = unpack( data.co )
+local width = data.width; local height = data.height
+
 local ui = {}
 
 function ui.newButton( options )
@@ -78,7 +81,8 @@ function ui.newCircleButton( options )
 
 	g:insert(s); g:insert(b)
 
-	local t = nil
+	local t, d = nil, nil
+	local tShadow = nil
 	if options.label ~= nil then
 		t = display.newText( {
 			text = options.label,
@@ -89,8 +93,8 @@ function ui.newCircleButton( options )
 		t:setFillColor( fn.cparse( options.labelColor.default ) )
 
 		if options.labelShadow == true then
-			local d = display.newGroup();
-			d:insert( fx.newTextShadow( {
+			d = display.newGroup();
+			tShadow = fx.newTextShadow( {
 				offsetX = options.shadowOffsetX,
 				offsetY = options.shadowOffsetY,
 				size = options.shadowSize,
@@ -101,12 +105,33 @@ function ui.newCircleButton( options )
 					fontSize = options.fontSize,
 					align = "center"
 				}
-			} ) )
-			d:insert(t); g:insert(d)
+			} )
+			d:insert( tShadow ); d:insert(t); g:insert(d)
 			d.y = options.radius + options.fontSize/2
 		else
 			g:insert(t)
 			t.y = options.radius + options.fontSize/2
+		end
+	end
+
+	function g:setLabelText( text )
+		t.text = text
+		if options.labelShadow == true then
+			tShadow = nil
+			tShadow = fx.newTextShadow( {
+				offsetX = options.shadowOffsetX,
+				offsetY = options.shadowOffsetY,
+				size = options.shadowSize,
+				opacity = options.shadowOpacity,
+				textOptions = {
+					text = text,
+					font = options.fontFamily,
+					fontSize = options.fontSize,
+					align = "center"
+				}
+			} )
+			d:insert( tShadow ); d:insert(t); g:insert(d)
+			d.y = options.radius + options.fontSize/2
 		end
 	end
 
@@ -147,10 +172,18 @@ function ui.newImageButton( options )
 	if options.width ~= nil then hitWidth, imageWidth = options.width, options.width end
 	if options.height ~= nil then hitHeight, imageHeight = options.height, options.height end
 
+	local over = false
+
 	local h = display.newRect( 0, 0, hitWidth, hitHeight )
 	h.isVisible = false; h.isHitTestable = true
-	local i = display.newImageRect( g, options.image, imageWidth, imageHeight )
-	i.isHitTestable = false; g:insert( h )
+	local i = display.newImageRect( g, "assets/img/" .. options.image .. ".png", imageWidth, imageHeight )
+	i.isHitTestable = false
+	local o = display.newImageRect( g, "assets/img/" .. options.image .. "_over.png", imageWidth, imageHeight )
+	if o ~= nil then
+		o.isVisible = false; o.isHitTestable = false
+		over = true
+	end
+	g:insert( h )
 
 	-- Insert shadow creation here
 
@@ -188,14 +221,22 @@ function ui.newImageButton( options )
 
 	h:addEventListener( "touch", function( event ) 
 		if event.phase == "began" then
-			-- Over look
+			display.getCurrentStage():setFocus( event.target )
+			if over then
+				o.isVisible = true
+				i.isVisible = false
+			end
 		elseif event.phase == "ended" or event.phase == "cancelled" then
-			-- Reset look
+			display.getCurrentStage():setFocus( nil )
+			if over then
+				o.isVisible = false
+				i.isVisible = true
+			end
 		end
 
 		if event.phase == "ended" then
-			local inXBounds = event.x >= g.x - options.width/2 and event.x <= g.x + options.width/2
-			local inYBounds = event.y >= g.y - options.height/2 and event.y <= g.y + options.height/2
+			local inXBounds = event.x >= g.x - hitWidth/2 and event.x <= g.x + hitWidth/2
+			local inYBounds = event.y >= g.y - hitHeight/2 and event.y <= g.y + hitHeight/2
 			if inXBounds and inYBounds and g.callback ~= nil then
 				g.callback( event )
 			end

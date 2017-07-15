@@ -1,6 +1,6 @@
 local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
-local Region = require "lib.Region"
+local Region, Movement = require "lib.Region", require "lib.Movement"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 local tau = 2*math.pi
 
@@ -20,12 +20,12 @@ function Action.new( actor )
 end
 
 function Action:update( delta )
-	print( "By doing nothing, nothing is left undone." )
-end
-
-function Action:callback()
-	self.actor.action = nil
-	self.actor.checkBehavior( { "actionComplete", "generic" } )
+	self.lifetime = self.lifetime + delta
+	if self.conditional ~= nil then
+		for key, conditional in pairs( self.conditional ) do
+			if conditional( self ) then self.contingency[ key ]( self ) end
+		end
+	end
 end
 
 --[[function ActionMT.__concat( action1, action2 )
@@ -35,116 +35,84 @@ end
 	return action1
 end--]]
 
-function Action.moveToPoint( actor, location, speed, easing )
+-- Moves the actor to a given location. Note that, by default, actions do *not* clear
+-- themselves on completion.
+function Action.moveToPoint( actor, location, animation )
 	local self = {
 		actor = actor,
-		xi = actor.group.x,
-		yi = actor.group.y,
-		xt = location[1],
-		yt = location[2],
-		speed = speed,
-		distanceTraveled = 0
+		targetLocation = location,
+		lifetime = 0,
 	}
-	self.distanceToTravel = fn.getDistance( {self.xi, self.yi}, location )
-	self.xRatio = (self.xt-self.xi)/self.distanceToTravel
-	self.yRatio = (self.yt-self.yi)/self.distanceToTravel
 
-	if easing ~= nil then
-		if easing == "quadratic" then
-			function self:update( delta )
-				if self.distanceToTravel - self.distanceTraveled > self.speed / 8 then
-					local stepSize = 2*self.speed - (3*self.speed/self.distanceToTravel^2) * (self.distanceTraveled-self.distanceToTravel)^2
-					self.actor.group:translate( stepSize*self.xRatio, stepSize*self.yRatio )
-					self.distanceTraveled = self.distanceTraveled + speed
-				else
-					self.actor.group.x = self.xt
-					self.actor.group.y = self.yt
-					self:callback()
-				end
-			end
-		end
-	else
-		function self:update( delta )
-			if self.distanceToTravel - self.distanceTraveled > self.speed then
-				self.actor.group:translate( self.speed*self.xRatio, self.speed*self.yRatio )
-				self.distanceTraveled = self.distanceTraveled + speed
-			else
-				self.actor.group.x = self.xt
-				self.actor.group.y = self.yt
-				self:callback()
-			end
-		end
-	end
-
+	actor.movement = Movement.arrive( self.actor, self.targetLocation )
 	
+	if animation ~= nil then
+		self.actor:setAnimation( animation )
+
+		local deltaT
+		local d = fn.magnitude( { location.x - actor.steering.position.x, location.y - actor.steering.position.y } )
+		local a = actor.steering.acceleration
+		local vMax = actor.steering.maxSpeed
+
+		if d <= vMax^2/a then
+			deltaT = math.sqrt( 2*d/a )
+		else
+			deltaT = 2*( vMax/a ) + ( d - vMax^2/a )/vMax
+		end
+
+		self.deltaT = deltaT - 0.4 -- animationStateData.defaultMix
+		self.hasBegunSlowdown = false
+
+		function self:update( delta )
+			print( self.deltaT )
+			self.deltaT = self.deltaT - delta
+			if self.deltaT <= 0 and not self.hasBegunSlowdown then
+				self.actor:setAnimation( "idle" )
+				self.hasBegunSlowdown = true
+			end
+		end
+
+	end
 
 	function self:callback()
-		self.actor:checkBehavior( { "actionComplete", "moveToPoint" } )
+		self.actor.movement = nil
+		self.actor.action = nil
 	end
 
 	setmetatable( self, ActionMT )
 	return self
 end
 
-function Action.wanderInRegion( actor, region, speed, variance )
-	if variance == nil then variance = 12 end
+-- Actor will move randomly from point to point within a given region
+function Action.wanderInRegion( actor, region, options )
 	local self = {
 		actor = actor,
 		region = region,
-		speed = speed,
-		direction = math.random()*tau,
-		buffer = variance*speed,
-		variance = tau/variance
+		currentTarget = region:point(),
+		lifetime = 0
 	}
 
-	function self:update( delta )
-		local step = delta*self.speed
-		local buffer = delta*self.buffer
-
-		local mod = ( math.random() - 0.5 )*self.variance
-		local newDir = self.direction+mod
-
-		local leader = {
-			self.actor.group.x + buffer*math.cos( newDir ),
-			self.actor.group.y + buffer*math.sin( newDir )
-		}
-
-		while not fn.inBounds( leader ) or not self.region.contains( leader ) do
-			newDir = newDir + 0.2*mod
-			leader = {
-				self.actor.group.x + buffer*math.cos( newDir ),
-				self.actor.group.y + buffer*math.sin( newDir )
-			}
+	if options ~= nil then
+		if options.conditional ~= nil then
+			self.conditional = options.conditional
+			self.contingency = options.contingency
 		end
+	else
+		self.conditional = {}
+		self.contingency = {}
+	end
 
-		self.actor.group:translate( step*math.cos( newDir ), step*math.sin( newDir ) )
-		self.direction = newDir
-
+	self.actor.movement = Movement.arrive( self.actor, self.currentTarget )
+	function self.conditional:wandercheck()
+		return not Movement.checkcelerate( self.actor, self.currentTarget )
+	end
+	function self.contingency:wandercheck()
+		self.currentTarget = self.region:point()
+		self.actor.movement = Movement.arrive( self.actor, self.currentTarget )
 	end
 
 	setmetatable( self, ActionMT )
 	return self
 end
-
-function Action.smoothWander( actor, region, speed, variance )
-	if variance == nil then variance = 12 end
-	local self = {
-		actor = actor,
-		region = region,
-		speed = speed,
-		direction = math.random()*tau,
-		curl = 0,
-		variance = variance
-	}
-
-	function self:update( delta ) end
-
-	setmetatable( self, ActionMT )
-	return self
-end
-
-
-
-
 
 return Action

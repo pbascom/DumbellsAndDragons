@@ -37,7 +37,6 @@ if not exists( "stair.json", system.DocumentsDirectory ) then
 	file:close()
 end
 
-
 --[[
 		Get to the app!
 --]]
@@ -85,10 +84,12 @@ hamburger = widget.newButton({
 hamburger.alpha = 0.5
 --]]
 
+-- composer.showOverlay( "scene.splash_screen", { isModal = true } )
 -- composer.gotoScene( "scene.map" )
--- composer.gotoScene( "scene.long_stair", { params = { class = "ranger", level = "2" } } )
--- composer.gotoScene( "scene.object_stair", { params = { class = "ranger", level = "2" } } )
-composer.gotoScene( "zone.classHall_ranger", { params = { class = "ranger", level = "2" } } )
+-- composer.gotoScene( "scene.long_stair", { params = { class = "ranger", level = "8" } } )
+-- composer.gotoScene( "scene.classHall_ranger" )
+-- composer.gotoScene( "scene.ranger_training" )
+composer.gotoScene( "scene.training.ranger.shortRun.2" )
 
 --[[
 local function print_r ( t ) 
