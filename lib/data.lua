@@ -84,7 +84,7 @@ data.zoneData.classHall_ranger = {
 data.animData = {
 	airSquat = {},
 	lunge = {
-		displacement = "right"
+		--displacement = "right"
 	},
 	highKnee = {},
 	buttKick = {},

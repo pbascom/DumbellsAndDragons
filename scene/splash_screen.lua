@@ -63,7 +63,7 @@ function scene:show( event )
 				time = 600,
 				alpha = 0,
 				onComplete = function()
-					composer.gotoScene( "scene.ranger_training" )
+					composer.hideOverlay()
 				end
 				} )
 		end )

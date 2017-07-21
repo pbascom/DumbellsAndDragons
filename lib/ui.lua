@@ -219,6 +219,17 @@ function ui.newImageButton( options )
 		end
 	end
 
+	if options.symbol ~= nil then
+		t = display.newText( {
+			text = options.symbol,
+			font = options.fontFamily,
+			fontSize = options.fontSize,
+			align = center
+		} )
+		t:setFillColor( fn.cparse( options.symbolColor.default ) )
+		g:insert( t )
+	end
+
 	h:addEventListener( "touch", function( event ) 
 		if event.phase == "began" then
 			display.getCurrentStage():setFocus( event.target )

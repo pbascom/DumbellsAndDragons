@@ -76,29 +76,32 @@ function Actor:removeRole( role )
 end
 
 -- Animation control methods
-function Actor:setIdle( idle )
-	if idle ~= nil then
-		self.animationState:setAnimationByName( 1, idle, true )
-	else
-		self.animationState:setEmptyAnimation( 1 )
-	end
-end
-
 function Actor:setAnimation( animation, loop, opacity )
 	if opacity == nil then opacity = 1 end
 	if loop == nil then loop = true end
+
+	local trackEntry
 	if animation == "empty" then
-		self.animationState:setEmptyAnimation( 2 )
+		trackEntry = self.animationState:setEmptyAnimation( 1 )
 	else
-		self.animationState:setAnimationByName( 2, animation, loop, opacity )
+		trackEntry = self.animationState:setAnimationByName( 1, animation, loop, opacity )
 	end
+	return trackEntry
+end
+
+function Actor:addAnimation( animation, loop, opacity )
+	if opacity == nil then opacity = 1 end
+	if loop == nil then loop = true end
+	print( animation )
+	local trackEntry = self.animationState:addAnimationByName( 1, animation, loop, opacity )
+	return trackEntry
 end
 
 function Actor:setAdjustment( adjustment, opacity )
 	if adjustment ~= nil then
-		self.animationState:setAnimationByName( 5, adjustment, true, opacity )
+		self.animationState:setAnimationByName( 2, adjustment, true, opacity )
 	else
-		self.animationState:setEmptyAnimation( 5 )
+		self.animationState:setEmptyAnimation( 2 )
 	end
 end
 

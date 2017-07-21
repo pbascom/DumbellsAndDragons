@@ -41,7 +41,7 @@ local theme = {
 	
 
 	-- Prompt UI Theming
-	promptBoxPadding = 14,
+	promptBoxPadding = 7,
 	promptBoxHeight = yn*3/6,
 	promptBoxColor = { 0.3, 0.5 },
 

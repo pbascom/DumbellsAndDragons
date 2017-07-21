@@ -31,17 +31,20 @@ local a = {
 
 -- Script Variables
 local sVars = {}
-sVars.noncore1 = Exercises.new( "ranger", "noncore", 10, sVars )
+--sVars.noncore1 = Exercises.new( "ranger", "noncore", 10, sVars )
+--sVars.noncore1 = { id = "plank", prompt = "Plank", anim = { "standToPlank", "plank", "plankToStand" } }
+sVars.noncore1 = { id = "lunge", prompt = "Lunges,", anim = "lunge" }
 sVars.noncore2 = Exercises.new( "ranger", "noncore", 10, sVars )
---sVars.noncore2 = { id = "lunge", prompt = "Lunges", anim = "lunge" }
 sVars.noncore3 = Exercises.new( "ranger", "noncore", 10, sVars )
 sVars.noncore4 = Exercises.new( "ranger", "noncore", 10, sVars )
 sVars.core1 = Exercises.new( "ranger", "core", 10, sVars )
 sVars.core2 = Exercises.new( "ranger", "core", 10, sVars )
 
+local trackEntry
+
 -- Script Object
 local script = {
-	-- Squats 1, intro
+	-- Noncore 1, first set; intro
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -51,7 +54,7 @@ local script = {
 				zone.dm:setFlavor( "Let's do this!" )
 				zone.dm:setPrompt( self.exercise.prompt, "1 minute" )
 
-				local animData = data.animData[ self.exercise.anim ]
+				local animData = {}
 				if animData.displacement ~= nil then
 					if animData.displacement == "right" then
 						zone.ai:place( a.hero, p.stageLeft )
@@ -59,9 +62,12 @@ local script = {
 					elseif animData.displacement == "left" then
 						zone.ai:place( a.hero, p.stageRight )
 						a.hero.position = "right"
+					else
+						zone.ai:place( a.hero, p.centerStage)
+						a.hero.position = "center"
 					end
 				else
-					zone.ai:place( a.hero, p.centerStage )
+					zone.ai:place( a.hero, p.centerStage)
 					a.hero.position = "center"
 				end
 				a.hero:setAnimation( "idle" )
@@ -81,7 +87,13 @@ local script = {
 				zone.dm:setConfiguration( "active" )
 				zone.playButton.isVisible = false
 
-				a.hero:setAnimation( sVars.noncore1.anim )
+				if type( sVars.noncore1.anim ) == "table" then
+					a.hero:setAnimation( sVars.noncore1.anim[1], false )
+					trackEntry = a.hero:addAnimation( sVars.noncore1.anim[2] )
+					trackEntry.mixDuration = 0
+				else
+					a.hero:setAnimation( sVars.noncore1.anim )
+				end
 
 				zone.dm.widget = Widget.countdown( {
 					duration = 60,
@@ -94,7 +106,13 @@ local script = {
 				zone.ai:register( zone.dm.widget )
 			end,
 			exit = function( self, zone )
-				a.hero:setAnimation( "idle" )
+				if type( sVars.noncore1.anim ) == "table" then
+					trackEntry.loop = false
+					a.hero:addAnimation( "plankToStand", false )
+					a.hero:addAnimation( "idle" )
+				else
+					a.hero:setAnimation( "idle" )
+				end
 
 				zone.ai:unregister( zone.dm.widget )
 				zone.dm.widget:remove()
@@ -104,7 +122,7 @@ local script = {
 			end
 		}
 	} ),
-	-- Lunges 1
+	-- Noncore 2, first set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -166,14 +184,14 @@ local script = {
 			end
 		}
 	} ),
-	-- Squats 2
+	-- Noncore 1, second set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
 				self.exercise = sVars.noncore1
 
 				zone.dm:setConfiguration( "init" )
-				zone.dm:setFlavor( "Back to squats now!" )
+				zone.dm:setFlavor( "Back to " .. self.exercise.prompt .. " now!" )
 				zone.dm:setPrompt( self.exercise.prompt, "1 minute" )
 
 				local animData = data.animData[ self.exercise.anim ]
@@ -228,12 +246,14 @@ local script = {
 			end
 		}
 	} ),
-	-- Lunges 2
+	-- Noncore 2, second set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
+				self.exercise = sVars.noncore2
+
 				zone.dm:setConfiguration( "init" )
-				zone.dm:setFlavor( "Time for lunges!" )
+				zone.dm:setFlavor( "Time for " .. self.exercise.prompt .."!" )
 				zone.dm:setPrompt( sVars.noncore2.prompt, "1 minute" )
 
 				-- WalkTo
@@ -277,12 +297,12 @@ local script = {
 			end
 		}
 	} ),
-	-- Squats 3
+	-- Noncore 1, third set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
 				zone.dm:setConfiguration( "init" )
-				zone.dm:setFlavor( "Last Round!" )
+				zone.dm:setFlavor( "Last round of " ..sVars.noncore1.prompt .. "!" )
 				zone.dm:setPrompt( sVars.noncore1.prompt, "1 minute" )
 
 				zone.ai:place( a.hero, p.centerStage )
@@ -326,12 +346,12 @@ local script = {
 			end
 		}
 	} ),
-	-- Lunges 3
+	-- Noncore 2, third set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
 				zone.dm:setConfiguration( "init" )
-				zone.dm:setFlavor( "Alright! Almost there." )
+				zone.dm:setFlavor( "Nice!" )
 				zone.dm:setPrompt( sVars.noncore2.prompt, "1 minute" )
 
 				-- WalkTo
@@ -375,12 +395,12 @@ local script = {
 			end
 		}
 	} ),
-	-- Run 1
+	-- Run, first set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
 				zone.dm:setConfiguration( "init" )
-				zone.dm:setFlavor( "Nice! Now take a lap." )
+				zone.dm:setFlavor( "Alright! Now take a lap." )
 				zone.dm:setPrompt( "Run", "1 mile" )
 
 				zone.ai:place( a.hero, p.stageLeft )
@@ -430,7 +450,7 @@ local script = {
 			end
 		}
 	} ),
-	-- High Knees
+	-- Noncore 3, first set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -476,12 +496,12 @@ local script = {
 			end
 		}
 	} ),
-	-- Butt Kicks
+	-- Noncore 4, first set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
 				zone.dm:setConfiguration( "init" )
-				zone.dm:setFlavor( "I told you to bring shoes!" )
+				zone.dm:setFlavor( "Keep it moving now." )
 				zone.dm:setPrompt( sVars.noncore4.prompt, "1 minute" )
 
 				-- Countdown
@@ -522,7 +542,7 @@ local script = {
 			end
 		}
 	} ),
-	-- Run 2
+	-- Run, second set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -576,7 +596,7 @@ local script = {
 			end
 		}
 	} ),
-	-- Burpees 1
+	-- Core 1, first set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -624,7 +644,7 @@ local script = {
 			end
 		}
 	} ),
-	-- Bird Dogs 1
+	-- Core 2, first set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -670,7 +690,7 @@ local script = {
 			end
 		}
 	} ),
-	-- Burpees 2
+	-- Core 1, second set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -716,7 +736,7 @@ local script = {
 			end
 		}
 	} ),
-	-- Bird Dogs 2
+	-- Core 2, second set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -762,7 +782,7 @@ local script = {
 			end
 		}
 	} ),
-	-- Burpees 3
+	-- Core 1, first set
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
@@ -808,12 +828,12 @@ local script = {
 			end
 		}
 	} ),
-	-- Bird Dogs 2
+	-- Core 2, third set; conclusion
 	Prompt.new( {
 		INIT = {
 			enter = function( self, zone )
 				zone.dm:setConfiguration( "init" )
-				zone.dm:setFlavor( "Finish it!" )
+				zone.dm:setFlavor( "Finish it." )
 				zone.dm:setPrompt( sVars.core2.prompt, "1 minute" )
 
 				-- Countdown
@@ -919,8 +939,8 @@ local s = {
 			zone.pm = PromptMachine.new( zone, script )
 		end,
 		didShow = function( self, zone, event )
-			composer.showOverlay( "scene.welcomeScreen", { params = { parentZone = zone } } )
-			-- zone:enterState( "ACTIVE" )	
+			-- composer.showOverlay( "scene.welcomeScreen", { params = { parentZone = zone } } )
+			zone:enterState( "ACTIVE" )	
 		end
 	},
 	ACTIVE = {

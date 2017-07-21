@@ -6,11 +6,16 @@ local Action, Behavior, Scenery = require "lib.Action", require "lib.Behavior", 
 local Widget, Exercises = require "lib.Widget", require "lib.Exercises"
 local DisplayManager, PromptMachine = require "lib.DisplayManager", require "lib.PromptMachine"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
+
 --[[
 		Zone object creation
 --]]
 -- Points
-local p = {}
+local p = {
+	centerStage = { x = xn, y = yf-80 },
+	stageLeft = { x = xo+80, y = yf-80 },
+	stageRight = { x = xf-80, y = yf-80 }
+}
 
 -- Regions
 local r = {}

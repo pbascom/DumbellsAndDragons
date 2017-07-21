@@ -27,8 +27,8 @@ function DisplayManager:build()
 
 	self.flavorText = fx.newShadowText( {
 		text = "",
-		width = 240,
-		x = xf - 135 + 25,
+		width = 220,
+		x = xf - 135 + 15,
 		y = yo + 75 - 35,
 		font = theme.baseFontFamily,
 		fontSize = theme.flavorFontSize,
@@ -46,7 +46,7 @@ function DisplayManager:build()
 		text = "",
 		x = xf - 135 - 10,
 		y = yo + 72,
-		width = widthUnit,
+		width = 220,
 		font = theme.boldFontFamily,
 		fontSize = theme.promptFontSize,
 		color = theme.black,
