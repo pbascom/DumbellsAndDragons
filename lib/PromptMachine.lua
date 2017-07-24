@@ -19,26 +19,26 @@ function PromptMachine.new( zone, script )
 	return self
 end
 
-function PromptMachine:init( phase )
+function PromptMachine:init( state )
 	self.index = 1
 	self.prompt = self.script[ self.index ]
-	self:enterPhase( "INIT" )
+	self:enterState( "INIT" )
 end
 
-function PromptMachine:enterPhase( phase )
-	self.prompt.phase = self.prompt.phases[ phase ]
-	self.prompt.phase:enter( self.zone )
+function PromptMachine:enterState( state )
+	self.prompt.state = self.prompt.states[ state ]
+	self.prompt.state:enter( self.zone )
 end
 
-function PromptMachine:exitPhase( phase )
-	self.prompt.phase:exit( self.zone )
+function PromptMachine:exitState( state )
+	self.prompt.state:exit( self.zone )
 end
 
 function PromptMachine:advance()
 	self.index = self.index+1
 	if self.script[ self.index ] ~= nil then
 		self.prompt = self.script[ self.index ]
-		self.prompt.phase:enter( self.zone )
+		self.prompt.state:enter( self.zone )
 	elseif self.zone.states.COMPLETE ~= nil then
 		self.zone:enterState( "COMPLETE" )
 	end

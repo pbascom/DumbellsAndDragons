@@ -81,16 +81,70 @@ data.zoneData.classHall_ranger = {
 --[[
 		Animation data
 --]]
-data.animData = {
-	airSquat = {},
-	lunge = {
-		--displacement = "right"
+data.exerciseData = {
+	airSquat = {
+		base = "stand"
 	},
-	highKnee = {},
-	buttKick = {},
-	run = {},
-	burpee = {},
-	birdDog = {}
+	lunge = {
+		base = "stand" -- eventually, change to standBack
+	},
+	highKnee = {
+		base = "stand"
+	},
+	buttKick = {
+		base = "stand"
+	},
+	karaoke = {
+		base = "stand"
+	},
+	longJump = {
+		base = "stand" -- Probably also change this to standBack
+	},
+	singleLegHop = {
+		base = "stand",
+		switchSides = 3
+	},
+	squatJump = {
+		base = "stand"
+	},
+	flutterKick = {
+		base = "supine",
+	},
+	plank = {
+		base = "prone",
+		transition = {
+			into = "proneToPlank",
+			outof = "plankToProne"
+		}
+	},
+	birdDog = {
+		base = "fours",
+		switchSides = 1,
+		transition = {
+			into = "foursToBird",
+			outof = "birdToFours"
+		}
+	},
+	burpee = {
+		base = "stand"
+	},
+	bicycle = {
+		base = "supine",
+		transition = {
+			into = "standToSupine",
+			outof = "supineToStand"
+		}
+	},
+	mountainClimber = {
+		base = "plank"
+	},
+	verticalLegLift = {
+		base = "supine",
+		transition = {
+			into = "standToSupine",
+			outof = "supineToStand"
+		}
+	}
 }
 
 return data

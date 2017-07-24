@@ -212,4 +212,11 @@ function fn.loadSpineObject( name, scale, skin )
 
 end
 
+--[[
+		Prompt & Zone helpers
+--]]
+function fn.getFlavor( exercise, isFirst, isFinal )
+	return "This is flavor!"
+end
+
 return fn

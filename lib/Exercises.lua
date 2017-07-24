@@ -12,18 +12,18 @@ local eVars = {
 -- Ranger noncore
 eVars.ranger.noncore[ "1" ] = {
 	{ id = "airSquat", prompt = "Air Squats", anim = "airSquat" },
-	{ id = "shuffle", prompt = "Shuffles", anim = "airSquat" },
+	--{ id = "shuffle", prompt = "Shuffles", anim = "airSquat" },
 	{ id = "lunge", prompt = "Lunges", anim = "lunge" }
 }
 eVars.ranger.noncore[ "6" ] = {
 	{ id = "highKnee", prompt = "High Knees", anim = "highKnee" },
 	{ id = "buttKick", prompt = "Butt Kicks", anim = "buttKick" },
-	{ id = "karaoke", prompt = "Karaokes", anim = "highKnee" },
-	{ id = "sprint", prompt = "Sprints", anim = "run" }
+	--{ id = "karaoke", prompt = "Karaokes", anim = "highKnee" },
+	--{ id = "sprint", prompt = "Sprints", anim = "run" }
 }
 eVars.ranger.noncore[ "11" ] = {
-	{ id = "longJump", prompt = "Long Jumps", anim = "burpee" },
-	{ id = "oneLeggedHop", prompt = "One Legged Hops", anim = "highKnee" },
+	--{ id = "longJump", prompt = "Long Jumps", anim = "burpee" },
+	{ id = "singleLegHop", prompt = "Single Leg Hops", anim = "highKnee" },
 	{ id = "squatJump", prompt = "Squat Jumps", anim = "airSquat" }
 }
 
@@ -32,16 +32,17 @@ eVars.ranger.core[ "1" ] = {
 	{ id = "flutterKick", prompt = "Flutter Kicks", anim = "birdDog" },
 	{ id = "plank", prompt = "Plank", anim = { "standToPlank", "plank", "plankToStand" } },
 	{ id = "birdDog", prompt = "Bird Dogs", anim = "birdDog" },
-	{ id = "russianTwist", prompt = "Russian Twists", anim = "birdDog" }
+	--{ id = "russianTwist", prompt = "Russian Twists", anim = "birdDog" }
 }
 eVars.ranger.core[ "6" ] = {
 	{ id = "burpee", prompt = "Burpees", anim = "burpee" },
 	{ id = "bicycle", prompt = "Bicycles", anim = "highKnee" },
-	{ id = "sidePlank", prompt = "Side Plank", anim = "birdDog" }
+	--{ id = "sidePlank", prompt = "Side Plank", anim = "birdDog" }
 }
 eVars.ranger.core[ "11" ] = {
 	{ id = "mountainClimber", prompt = "Mountain Climbers", anim = "birdDog" },
-	{ id = "verticalLegLift", prompt = "Vertical Leg Lifts", anim = "highKnee" }
+	{ id = "verticalLegLift", prompt = "Vertical Leg Lifts", anim = "highKnee" },
+	--{ id = "lateralFlutterKick", prompt = "Flutter Kicks", anim = "birdDog" }
 }
 
 
