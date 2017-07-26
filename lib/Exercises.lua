@@ -23,25 +23,25 @@ eVars.ranger.noncore[ "6" ] = {
 }
 eVars.ranger.noncore[ "11" ] = {
 	--{ id = "longJump", prompt = "Long Jumps", anim = "burpee" },
-	{ id = "singleLegHop", prompt = "Single Leg Hops", anim = "highKnee" },
+	{ id = "singleLegHop", prompt = "Single Leg Hops", anim = "singleLegHop_right" },
 	{ id = "squatJump", prompt = "Squat Jumps", anim = "airSquat" }
 }
 
 --Ranger core
 eVars.ranger.core[ "1" ] = {
-	{ id = "flutterKick", prompt = "Flutter Kicks", anim = "birdDog" },
-	{ id = "plank", prompt = "Plank", anim = { "standToPlank", "plank", "plankToStand" } },
-	{ id = "birdDog", prompt = "Bird Dogs", anim = "birdDog" },
+	{ id = "flutterKick", prompt = "Flutter Kicks", anim = "flutterKick" },
+	{ id = "plank", prompt = "Plank", anim = "plank" },
+	{ id = "birdDog", prompt = "Bird Dogs", anim = "birdDog_right" },
 	--{ id = "russianTwist", prompt = "Russian Twists", anim = "birdDog" }
 }
 eVars.ranger.core[ "6" ] = {
 	{ id = "burpee", prompt = "Burpees", anim = "burpee" },
-	{ id = "bicycle", prompt = "Bicycles", anim = "highKnee" },
+	{ id = "bicycle", prompt = "Bicycles", anim = "bicycle" },
 	--{ id = "sidePlank", prompt = "Side Plank", anim = "birdDog" }
 }
 eVars.ranger.core[ "11" ] = {
-	{ id = "mountainClimber", prompt = "Mountain Climbers", anim = "birdDog" },
-	{ id = "verticalLegLift", prompt = "Vertical Leg Lifts", anim = "highKnee" },
+	{ id = "mountainClimber", prompt = "Mountain Climbers", anim = "mountainClimber" },
+	{ id = "verticalLegLift", prompt = "Vertical Leg Lifts", anim = "verticalLegLift" },
 	--{ id = "lateralFlutterKick", prompt = "Flutter Kicks", anim = "birdDog" }
 }
 

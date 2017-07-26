@@ -48,6 +48,16 @@ function scene:create( event )
 	acceptButton.x = xn
 	acceptButton.y = yn + 286
 
+	local buildText = fx.newShadowText( {
+		text = data.build[1] .. " " .. data.build[2],
+		x = xn,
+		y = yn - 188,
+		font = theme.baseFontFamily,
+		fontSize = 28,
+		color = theme.black
+	} )
+	self.view:insert( buildText )
+
 end
 
 

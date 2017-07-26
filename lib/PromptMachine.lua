@@ -27,18 +27,18 @@ end
 
 function PromptMachine:enterState( state )
 	self.prompt.state = self.prompt.states[ state ]
-	self.prompt.state:enter( self.zone )
+	self.prompt.state.enter( self.zone )
 end
 
 function PromptMachine:exitState( state )
-	self.prompt.state:exit( self.zone )
+	self.prompt.state.exit( self.zone )
 end
 
 function PromptMachine:advance()
 	self.index = self.index+1
 	if self.script[ self.index ] ~= nil then
 		self.prompt = self.script[ self.index ]
-		self.prompt.state:enter( self.zone )
+		self.prompt.state.enter( self.zone )
 	elseif self.zone.states.COMPLETE ~= nil then
 		self.zone:enterState( "COMPLETE" )
 	end

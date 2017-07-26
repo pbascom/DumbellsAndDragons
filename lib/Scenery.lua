@@ -17,11 +17,7 @@ function Scenery:place( zone )
 	if self.group ~= nil then target = self.group end
 	if self.layer == nil then self.layer = "near" end
 
-	if self.layer == "far" then zone.parallaxFar:insert( target )
-	elseif self.layer == "mid" then zone.parallaxMid:insert( target )
-	elseif self.layer == "near" then zone.parallaxNear:insert( target )
-	elseif self.layer == "front" then zone.parallaxFront:insert( target )
-	end
+	zone[ "parallax" .. fn.camelFix( self.layer ) ]:insert( target )
 end
 
 --[[

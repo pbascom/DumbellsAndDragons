@@ -2,7 +2,7 @@ local data, theme = require "lib.data", require "lib.theme"
 local fn, fx, ui = require "lib.fn", require "lib.fx", require "lib.ui"
 local composer = require "composer"
 local AI, Actor = require "lib.AI", require "lib.Actor"
-local DisplayManager = require "lib.DisplayManager"
+local DisplayManager, PromptMachine = require "lib.DisplayManager", require "lib.PromptMachine"
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
 local Zone = {}
@@ -52,13 +52,14 @@ function Zone:enterState( state )
 	end
 end
 
-function Zone.new( id, points, regions, actors, environment, states )
+function Zone.new( id, points, regions, actors, environment, states, script )
 	local self = {
 		id = id,
 		points = points,
 		regions = regions,
 		actors = actors,
 		environment = environment,
+		script = script,
 
 		states = states,
 		state = {},
@@ -96,12 +97,18 @@ function Zone:init( scene, event )
 	self.parallaxFront = display.newGroup()
 	self.view:insert( self.parallaxFront )
 
+	self.parallaxForemost = display.newGroup()
+	self.view:insert( self.parallaxForemost )
+
 	self.interface = display.newGroup()
 	self.view:insert( self.interface )
 
 	-- Display Manager
 	self.dm = DisplayManager.new( self.interface )
 	self.playButton, self.pauseButton = self.dm:build()
+
+	-- Prompt Machine
+	self.pm = PromptMachine.new( self, self.script )
 	
 	-- Background image
 	local background = display.newImageRect( "assets/img/" .. self.id .. "_background.jpg", theme.fullWidth, theme.fullHeight )

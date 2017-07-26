@@ -16,7 +16,7 @@ local scene = composer.newScene()
 local width, height, xn, yn = display.actualContentWidth, display.actualContentHeight, display.contentCenterX, display.contentCenterY
 local raleway, unifraktur, raleway_bold = "assets/font/Raleway 500.ttf", "assets/font/UnifrakturCook 700.ttf", "assets/font/Raleway 700.ttf"
 
-local background, foreground
+local background, foreground, interface
 local backgroundImage, backgroundFade, description, duration, equipment
 local acceptButton
 

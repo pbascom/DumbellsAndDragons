@@ -33,7 +33,10 @@ function Actor.new( species, roles )
 			angularSpeed = 0,
 			maxAngularSpeed = data.speciesData[species].maxAngularSpeed,
 			angularAcceleration = data.speciesData[species].angularAcceleration
-		}
+		},
+
+		baseAnimation = nil,
+		currentTrackEntry = nil
 	}
 
 	-- Populate Roles table
@@ -80,21 +83,17 @@ function Actor:setAnimation( animation, loop, opacity )
 	if opacity == nil then opacity = 1 end
 	if loop == nil then loop = true end
 
-	local trackEntry
 	if animation == "empty" then
-		trackEntry = self.animationState:setEmptyAnimation( 1 )
+		self.currentTrackEntry = self.animationState:setEmptyAnimation( 1 )
 	else
-		trackEntry = self.animationState:setAnimationByName( 1, animation, loop, opacity )
+		self.currentTrackEntry = self.animationState:setAnimationByName( 1, animation, loop, opacity )
 	end
-	return trackEntry
 end
 
 function Actor:addAnimation( animation, loop, opacity )
 	if opacity == nil then opacity = 1 end
 	if loop == nil then loop = true end
-	print( animation )
-	local trackEntry = self.animationState:addAnimationByName( 1, animation, loop, opacity )
-	return trackEntry
+	self.currentTrackEntry = self.animationState:addAnimationByName( 1, animation, loop, opacity )
 end
 
 function Actor:setAdjustment( adjustment, opacity )
@@ -102,6 +101,23 @@ function Actor:setAdjustment( adjustment, opacity )
 		self.animationState:setAnimationByName( 2, adjustment, true, opacity )
 	else
 		self.animationState:setEmptyAnimation( 2 )
+	end
+end
+
+function Actor:setBaseAnimation( animation )
+	self.baseAnimation = animation
+	self:setAnimation( animation, true )
+end
+
+function Actor:changeBaseAnimation( animation )
+	local base = self.baseAnimation
+	self.baseAnimation = animation
+	self.currentTrackEntry.loop = false
+	if self.skeleton.data.animations[ base .."To" .. fn.camelFix( animation ) ] ~= nil then
+		self:addAnimation( base .. "To" .. fn.camelFix( animation ) )
+		self:addAnimation( animation )
+	else
+		self:setAnimation( animation )
 	end
 end
 
@@ -123,7 +139,7 @@ function Actor:moveToPoint( location, animation )
 		print( "moveToPoint: " .. animation )
 		self:setAction( Action.moveToPoint( self, location, animation ) )
 	else
-		self:setAction( Action.moveToPoint( self, location ) )
+		self:setAction( Action.moveToPoint( self, location ) ) 
 	end
 end
 

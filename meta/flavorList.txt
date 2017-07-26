@@ -1,0 +1,40 @@
+isFirst:
+"Let's do this!"
+"Alright! Let's get this started."
+
+isFinal:
+"Finish it."
+"This is it! Finish strong."
+
+Any:
+"Nice job! Up next:"
+"Time for " .. self.exercise.prompt .. " now!"
+"Time for " .. self.exercise.prompt .."!"
+"Nice!"
+"It's not over yet!"
+"Keep it moving now."
+--"Back to " .. self.exercise.prompt .."!"
+"Brilliant! Keep it going."
+"Awesome! Keep it going."
+--"Last round of " .. self.exercise.prompt .. "!"
+"Great! Keep it moving."
+"Up next:"
+"Keep it going!"
+"Nice job! And now,"
+--"Wonderful. Another!"
+"Nice job!"
+--"Another round of " .. self.exercise.prompt .. "!"
+"Here we go!"
+--"Alright, another round of " .. self.exercise.prompt .. "."
+
+Runs:
+"Alright! Now take a lap."
+"Perfect! Time to run."
+"Alright! You ready for a run?"
+"Alright! Let's run."
+--"Great! Another lap."
+
+Core:
+"Train that core, Ranger!"
+"OK! Time for core work."
+"I hope you brought your abs today!"

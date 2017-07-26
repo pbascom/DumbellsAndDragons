@@ -21,6 +21,11 @@ function fn.cparse( input )
 	return unpack( input )
 end
 
+-- Takes a string, and makes the first letter uppercase.
+function fn.camelFix( input )
+	return string.upper( string.sub( input, 1, 1 ) ) .. string.sub( input, 2 )
+end
+
 -- Parses a point or actor, and returns a valid Movement target
 function fn.tparse( input )
 	local output
@@ -216,7 +221,98 @@ end
 		Prompt & Zone helpers
 --]]
 function fn.getFlavor( exercise, isFirst, isFinal )
-	return "This is flavor!"
+	local options_isNormal = {
+		"Nice job! Up next:",
+		"Time for " .. exercise.prompt .. " now!",
+		"Time for " .. exercise.prompt .."!",
+		"Nice!",
+		"It's not over yet!",
+		"Keep it moving now.",
+		--"Back to " .. exercise.prompt .."!",
+		"Brilliant! Keep it going.",
+		"Awesome! Keep it going.",
+		--"Last round of " .. exercise.prompt .. "!",
+		"Great! Keep it moving.",
+		"Up next:",
+		"Keep it going!",
+		"Nice job! And now,",
+		--"Wonderful. Another!",
+		"Nice job!",
+		--"Another round of " .. exercise.prompt .. "!",
+		"Here we go!",
+		--"Alright, another round of " .. exercise.prompt .. "."
+	}
+	local options_isFirst = {
+		"Let's do this!",
+		"Alright! Let's get this started."
+	}
+	local options_isFinal = {
+		"Finish it.",
+		"This is it! Finish strong."
+	}
+	local options_isRun = {
+		"Alright! Now take a lap.",
+		"Perfect! Time to run.",
+		"Alright! You ready for a run?",
+		"Alright! Let's run.",
+		--"Great! Another lap."
+	}
+	local options_isCore = {
+		"Train that core, Ranger!",
+		"OK! Time for core work.",
+		"I hope you brought your abs today!"
+	}
+
+	local flavorOptions = {}
+	local j = 1
+
+	if isFirst then
+		for i, v in ipairs( options_isFirst ) do
+			flavorOptions[ j ] = v
+			j = j+1
+		end
+	elseif isFinal then
+		for i, v in ipairs( options_isFinal ) do
+			flavorOptions[ j ] = v
+			j = j+1
+		end
+	else
+		for i, v in ipairs( options_isNormal ) do
+			flavorOptions[ j ] = v
+			j = j+1
+		end
+	end
+
+	if not isFirst and not isFinal and exercise.id == "run" then
+		for i, v in ipairs( options_isRun ) do
+			flavorOptions[ j ] = v
+			j = j+1
+		end
+	end
+	
+	local isCore = false
+	for i, v in ipairs( {
+			"flutterKick",
+			"plank",
+			"birdDog",
+			"burpee",
+			"bicycle",
+			"sidePlank",
+			"mountainClimber",
+			"verticalLegLift",
+			"lateralFlutterKick"
+		} ) do
+		if exercise.id == v then isCore = true end
+	end
+	if not isFirst and not isFinal and isCore then
+		for i, v in ipairs( options_isCore ) do
+			flavorOptions[ j ] = v
+			j = j+1
+		end
+	end
+
+	return flavorOptions[ math.random( 1, #flavorOptions ) ]
+
 end
 
 return fn

@@ -1,5 +1,6 @@
 local data = require "lib.data"
 local fn = require "lib.fn"
+local Widget = require "lib.Widget"
 
 local Prompt = {}
 local PromptMT = { __index = Prompt }
@@ -73,18 +74,25 @@ function Prompt.generate( zoneData, promptData )
 		duration = promptData.duration,
 		isFirst = false,
 		isFinal = false,
+		hasCommands = false,
 		state = nil
 	}
 
 	if promptData.isFirst == true then self.isFirst = true end
 	if promptData.isFinal == true then self.isFinal = true end
 
+	if promptData.commands ~= nil then
+		self.hasCommands = true
+		self.commands = promptData.commands
+	end
+
 	if promptData.flavor ~= nil then self.flavor = promptData.flavor
-	else self.flavor = fn.getFlavor( exercise, self.isFirst, self.isFinal ) end
+	else self.flavor = fn.getFlavor( self.exercise, self.isFirst, self.isFinal ) end
 
 	if type( self.duration ) == "number" then
 		if self.duration % 60 == 0 then
-			self.durationText = ( self.duration / 60 ) .. " minutes"
+			if self.duration / 60 == 1 then self.durationText = "1 minute"
+			else self.durationText = ( self.duration / 60 ) .. " minutes" end
 		else
 			self.durationText = self.duration .. " seconds"
 		end
@@ -94,25 +102,101 @@ function Prompt.generate( zoneData, promptData )
 
 	-- States
 	self.states = {
-	INIT = {
-		enter = function( zone )
-			zone.dm:setConfiguration( "init" )
-			zone.dm:setFlavor( self.flavor )
-			zone.dm:setPrompt( self.exercise.prompt, self.durationText )
+		INIT = {
+			enter = function( zone )
+				zone.dm:setConfiguration( "init" )
+				zone.dm:setFlavor( self.flavor )
+				zone.dm:setPrompt( self.exercise.prompt, self.durationText )
 
-			if self.isFirst then
-				zone.ai:place( a.hero, p.spawn )
-				a.hero:setAnimation( self.exerciseData.base )
+				if self.isFirst then
+					zone.ai:place( a.hero, p.spawn )
+					a.hero:setBaseAnimation( self.exerciseData.base )
+				elseif self.exerciseData.base ~= a.hero.baseAnimation then
+					a.hero:changeBaseAnimation( self.exerciseData.base )
+				end
+
+				zone.playButton.callback = function()
+					zone.pm:exitState( "INIT" )
+				end
+
+				if self.hasCommands then
+					if self.commands.init ~= nil then self.commands.init( zone ) end
+				end
+			end,
+			exit = function( zone )
+				zone.playButton.callback = nil
+				audio.play( data.sound.bell )
+				zone.pm:enterState( "COMMIT" )
 			end
+		},
+		COMMIT = {
+			enter = function( zone )
+				zone.dm:setConfiguration( "active" )
+				if type( self.duration ) == "number" then
+					zone.playButton.isVisible = false
+				end
 
+				if self.exerciseData.transition ~= nil then
+					a.hero:setAnimation( self.exerciseData.transition.into, false )
+					a.hero:addAnimation( self.exercise.anim )
+				else
+					a.hero:setAnimation( self.exercise.anim )
+				end
 
-		end
-	},
-	COMMIT = {},
-	CONCLUDE = {}
+				if type( self.duration ) == "number" then
+					zone.dm.widget = Widget.countdown( {
+						duration = self.duration,
+						group = zone.interface,
+						callback = function()
+							audio.play( data.sound.applause )
+							zone.pm:exitState( "COMMIT" )
+						end
+					} )
+					zone.ai:register( zone.dm.widget )
+				else
+					zone.playButton.callback = function()
+						zone.pm:exitState( "COMMIT" )
+					end
+				end
+
+				if self.hasCommands then
+					if self.commands.commit ~= nil then self.commands.commit( zone ) end
+				end
+			end,
+			exit = function( zone )
+				if self.exerciseData.transition ~= nil then
+					a.hero.currentTrackEntry.loop = nil
+					a.hero:addAnimation( self.exerciseData.transition.outof, false )
+					a.hero:addAnimation( self.exerciseData.base )
+				else
+					a.hero:setAnimation( self.exerciseData.base )
+				end
+
+				if zone.dm.widget ~= nil then
+					zone.ai:unregister( zone.dm.widget )
+					zone.dm.widget:remove()
+					zone.dm.widget = nil
+				end
+
+				zone.pm:enterState( "CONCLUDE" )
+			end
+		},
+		CONCLUDE = {
+			enter = function( zone )
+		
+				if self.hasCommands then
+					if self.commands.conclude ~= nil then self.commands.conclude( zone ) end
+				end
+
+				zone.pm:exitState( "CONCLUDE" )
+			end,
+			exit = function( zone )
+				zone.pm:advance()
+			end
+		}
 	}
 
-	self.state = INIT
+	self.state = self.states.INIT
 
 	setmetatable( self, PromptMT )
 	return self

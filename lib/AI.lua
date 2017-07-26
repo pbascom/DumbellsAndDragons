@@ -48,9 +48,12 @@ function AI:deactivate( ... )
 	end
 end
 
-function AI:place( actor, point )
+function AI:place( actor, point, layer )
 	actor.group.x = point.x
 	actor.group.y = point.y
+
+	if layer == nil then layer = "foreground" end
+	self.zone[ layer ]:insert( actor.group )
 end
 
 function AI.new( zone, actors )

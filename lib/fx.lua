@@ -119,12 +119,17 @@ function fx.newShadowText( options )
 	g.textObject:setFillColor( fn.cparse ( options.color ) )
 
 	local shadowOptions = {
-		offsetX = options.shadowOffsetX,
-		offsetY = options.shadowOffsetY,
-		size = options.shadowSize,
-		opacity = options.shadowOpacity,
 		textOptions = textOptions
 	}
+	if options.shadowOffsetX ~= nil then shadowOptions.offsetX = options.shadowOffsetX
+	else shadowOptions.offsetX = theme.shadow.x.medium end
+	if options.shadowOffsetY ~= nil then shadowOptions.offsetY = options.shadowOffsetY
+	else shadowOptions.offsetY = theme.shadow.y.medium end
+	if options.shadowSize ~= nil then shadowOptions.size = options.shadowSize
+	else shadowOptions.size = theme.shadow.size.medium end
+	if options.shadowOpacity ~= nil then shadowOptions.opacity = options.shadowOpacity
+	else shadowOptions.opacity = theme.shadow.opacity.medium end
+
 	g.shadowObject = fx.newTextShadow( shadowOptions )
 	g.shadowObject:toBack()
 

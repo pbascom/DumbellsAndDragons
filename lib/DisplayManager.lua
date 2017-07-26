@@ -19,7 +19,7 @@ end
 
 function DisplayManager:build()
 	-- Prompt Display creation
-	self.questGiver = display.newImageRect( self.group, "assets/img/rangerface.png", 98, 113 )
+	self.questGiver = display.newImageRect( self.group, "assets/img/aedrian.png", 110, 126 )
 	self.questGiver.x = xo + 47 + 10; self.questGiver.y = yo + 56 + 10
 
 	self.promptBox = display.newImageRect( self.group, "assets/img/promptBubble.png", 270, 130 )
@@ -151,6 +151,7 @@ function DisplayManager:setConfiguration( configuration )
 		self.group.isVisible = true
 	end
 	if configuration == "active" then
+		print( "Setting DM configuration: active" )
 		self.promptBox.isVisible = false
 		self.questGiver.isVisible = false
 		self.flavorText.isVisible = false
@@ -171,6 +172,7 @@ function DisplayManager:setConfiguration( configuration )
 		self.promptNumber.y = yo + theme.promptTextPadding + theme.promptFontSize
 	end
 	if configuration == "init" then
+		print( "Setting DM configuration: init" )
 		self.promptBox.isVisible = true
 		self.questGiver.isVisible = true
 		self.flavorText.isVisible = true

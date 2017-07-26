@@ -34,6 +34,9 @@ function scene:create( event )
 	foreground = display.newGroup()
 	view:insert( foreground )
 
+	interface = display.newGroup()
+	view:insert( interface )
+
 	--Content
 	backgroundImage = display.newImageRect( background, "assets/img/" .. params.id .. "_splash.png", 480, 640 )
 	backgroundImage.x = xn; backgroundImage.y = yn

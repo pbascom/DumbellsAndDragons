@@ -30,7 +30,7 @@ local a = {
 local e = {
 	forest = Scenery.parallaxGroup( {
 		key = Scenery.endlessParallax( {
-			layer = "near",
+			layer = "front",
 			width = 1086,
 			height = 640,
 			xStart = xn,
@@ -60,8 +60,8 @@ local e = {
 				period = { 1086, 640 },
 				image = "assets/img/training_forest_parallax_midground.png"
 			} ),
-			Scenery.parallaxMinion( {
-				layer = "front",
+			--[[ Scenery.parallaxMinion( {
+				layer = "foremost",
 				width = 1086,
 				height = 640,
 				xStart = xn+1086,
@@ -69,7 +69,7 @@ local e = {
 				ratio = 4,
 				period = { 1086*5, 640 },
 				image = "assets/img/training_forest_parallax_front.png"
-			} )
+			} ) --]]
 		}
 	} )
 }
@@ -78,26 +78,104 @@ local e = {
 		Script Creation
 --]]
 
--- Script Variables
-local sVars = {}
---sVars.noncore1 = Exercises.new( "ranger", "noncore", 10, sVars )
-sVars.noncore1 = { id = "plank", prompt = "Plank", anim = { "standToPlank", "plank", "plankToStand" } }
-sVars.noncore1 = { id = "lunge", prompt = "Lunges,", anim = "lunge" }
-sVars.noncore2 = Exercises.new( "ranger", "noncore", 10, sVars )
-sVars.noncore3 = Exercises.new( "ranger", "noncore", 10, sVars )
-sVars.noncore4 = Exercises.new( "ranger", "noncore", 10, sVars )
-sVars.core1 = Exercises.new( "ranger", "core", 10, sVars )
-sVars.core2 = Exercises.new( "ranger", "core", 10, sVars )
-
-local trackEntry
+-- Workouts
+local w = {}
+w.noncore1 = Exercises.new( "ranger", "noncore", 10, w )
+w.noncore2 = Exercises.new( "ranger", "noncore", 10, w )
+w.noncore3 = Exercises.new( "ranger", "noncore", 10, w )
+w.noncore4 = Exercises.new( "ranger", "noncore", 10, w )
+w.core1 = Exercises.new( "ranger", "core", 10, w )
+w.core2 = Exercises.new( "ranger", "core", 10, w )
+w.run = { id = "run", prompt = "Run", anim = "run" }
 
 -- Script Object
 local zoneData = { p = p, r = r, a = a, e = e }
 local script = {
-	Prompt.generate( zoneData, {		
-		exercise = sVars.noncore1,
+	Prompt.generate( zoneData, {
+		exercise = w.noncore1,
 		duration = 60,
 		isFirst = true
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.noncore2,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.noncore1,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.noncore2,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.noncore1,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.noncore2,
+		duration = 60
+	} ),
+
+	Prompt.generate( zoneData, {		
+		exercise = w.run,
+		duration = "1 mile",
+		commands = {
+			commit = function( zone )
+				zone.ai:register( e.forest )
+			end,
+			conclude = function( zone )
+				zone.ai:unregister( e.forest )
+			end
+		}
+	} ),
+
+	Prompt.generate( zoneData, {
+		exercise = w.noncore3,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.noncore4,
+		duration = 60
+	} ),
+
+	Prompt.generate( zoneData, {		
+		exercise = w.run,
+		duration = "1 mile",
+		commands = {
+			commit = function( zone )
+				zone.ai:register( e.forest )
+			end,
+			conclude = function( zone )
+				zone.ai:unregister( e.forest )
+			end
+		}
+	} ),
+
+	Prompt.generate( zoneData, {
+		exercise = w.core1,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.core2,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.core1,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.core2,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.core1,
+		duration = 60
+	} ),
+	Prompt.generate( zoneData, {
+		exercise = w.core2,
+		duration = 60,
+		isFinal = true
 	} )
 }
 
@@ -107,15 +185,10 @@ local s = {
 		enter = function( self, zone )
 			local a = zone.actors
 			zone.ai:activate( a.hero )
-
-			zone.dm = DisplayManager.new( zone.interface )
-			zone.playButton, zone.pauseButton = zone.dm:build()
-
-			zone.pm = PromptMachine.new( zone, script )
 		end,
 		didShow = function( self, zone, event )
-			-- composer.showOverlay( "scene.welcomeScreen", { params = { parentZone = zone } } )
-			zone:enterState( "ACTIVE" )	
+			composer.showOverlay( "scene.welcomeScreen", { params = { parentZone = zone } } )
+			zone:enterState( "ACTIVE" )
 		end
 	},
 	ACTIVE = {
@@ -133,7 +206,7 @@ local s = {
 }
 
 -- Zone
-local zone = Zone.new( "training_forest", p, r, a, e, s )
+local zone = Zone.new( "training_forest", p, r, a, e, s, script )
 
 
 --[[

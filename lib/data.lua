@@ -8,6 +8,8 @@ local tau = 2*math.pi
 -- So weird that we need this. Don't worry, it'll be gone after testing.
 local xn, yn, xo, yo, xf, yf = unpack( data.co )
 
+data.build = { "alpha", 1.1 }
+
 data.sound = {
 	bell = audio.loadSound( "assets/sound/bell.wav" ),
 	applause = audio.loadSound( "assets/sound/applause.wav" )
@@ -23,7 +25,44 @@ data.speciesData.default = {
 	precision = tau/4
 }
 
-data.speciesData.DragonChick = data.speciesData.default
+data.speciesData.DragonChick = {
+	acceleration = 240,
+	maxSpeed = 120,
+	maxAngularSpeed = tau/2,
+	angularAcceleration = tau/4,
+	precision = tau/4,
+	animations = {
+		"airSquat",
+		"bicycle",
+		"birdDog",
+		"birdDog_left",
+		"birdDog_right",
+		"burpee",
+		"buttKick",
+		"flutterKick",
+		"foursToBird",
+		"foursToStand",
+		"highKnee",
+		"jumpSquat",
+		"lunge",
+		"mountainClimber",
+		"plank",
+		"plankToProne",
+		"plankToStand",
+		"run",
+		"singleLegHop_left",
+		"singleLegHop_right",
+		"stand",
+		"standStill",
+		"standToFours",
+		"standToPlank",
+		"standToProne",
+		"standToSupine",
+		"supine",
+		"supineToStand",
+		"verticalLegLift"
+	}
+}
 data.speciesData.LegoDude = data.speciesData.default
 
 
@@ -130,20 +169,15 @@ data.exerciseData = {
 	},
 	bicycle = {
 		base = "supine",
-		transition = {
-			into = "standToSupine",
-			outof = "supineToStand"
-		}
 	},
 	mountainClimber = {
 		base = "plank"
 	},
 	verticalLegLift = {
 		base = "supine",
-		transition = {
-			into = "standToSupine",
-			outof = "supineToStand"
-		}
+	},
+	run = {
+		base = "stand"
 	}
 }
 
