@@ -53,7 +53,7 @@ function scene:create( event )
 	interface:insert( screen )
 
 	local titleText = display.newText({
-		text = "Sample Workouts:",
+		text = "Ready for a workout?",
 		font = theme.raleway,
 		fontSize = 24
 	})
